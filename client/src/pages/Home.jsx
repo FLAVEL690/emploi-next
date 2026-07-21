@@ -195,7 +195,7 @@ export default function Home() {
 
       <section className="features">
         <div className="container">
-          <h2 className="section-title">Pourquoi NexaPro ?</h2>
+          <h2 className="section-title">Pourquoi NexadigicPro ?</h2>
           <div className="features-grid">
             <div className="feature-card">
               <FiTrendingUp className="feature-icon" />
@@ -220,7 +220,7 @@ export default function Home() {
         <div className="container">
           <div className="cta-content">
             <h2>Prêt à trouver votre prochain emploi ?</h2>
-            <p>Rejoignez des milliers de candidats et recruteurs sur NexaPro</p>
+            <p>Rejoignez des milliers de candidats et recruteurs sur NexadigicPro</p>
             <div className="cta-buttons">
               <Link to="/register" className="btn btn-primary btn-lg">Créer un compte gratuit</Link>
               <Link to="/jobs" className="btn btn-secondary btn-lg">Explorer les offres</Link>

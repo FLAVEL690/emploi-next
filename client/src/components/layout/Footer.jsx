@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="footer-brand">
             <div className="footer-logo">
               <span className="logo-icon">N</span>
-              <span>NexaPro</span>
+              <span>NexadigicPro</span>
             </div>
             <p>La plateforme de recrutement qui connecte les talents aux meilleures opportunités professionnelles.</p>
           </div>
