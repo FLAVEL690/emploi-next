@@ -5,9 +5,14 @@
   "scripts": {
     "server": "cd server && npm run dev",
     "client": "cd client && npm run dev",
-    "dev": "start cmd /c \"cd server && npm run dev\" && cd client && npm run dev"
+    "dev": "start cmd /c \"cd server && npm run dev\" && cd client && npm run dev",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "wrangler": "^4.112.0"
+  }
 }
