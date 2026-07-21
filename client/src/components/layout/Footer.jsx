@@ -37,7 +37,7 @@ export default function Footer() {
               <FiPhone /> +237 672 342 582 / +237 6 56 18 00 51
             </div>
             <div className="footer-contact">
-              <FiMapPin /> Douala, Cameroun
+              <FiMapPin /> Yaounde, Cameroun
             </div>
           </div>
         </div>
