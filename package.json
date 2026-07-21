@@ -1,0 +1,13 @@
+{
+  "name": "emploipro",
+  "version": "1.0.0",
+  "description": "Plateforme de recrutement EmploiPro",
+  "scripts": {
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "dev": "start cmd /c \"cd server && npm run dev\" && cd client && npm run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
