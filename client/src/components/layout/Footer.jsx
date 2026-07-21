@@ -9,8 +9,8 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <div className="footer-logo">
-              <span className="logo-icon">E</span>
-              <span>EmploiPro</span>
+              <span className="logo-icon">N</span>
+              <span>NexaPro</span>
             </div>
             <p>La plateforme de recrutement qui connecte les talents aux meilleures opportunités professionnelles.</p>
           </div>
@@ -31,10 +31,10 @@ export default function Footer() {
           <div className="footer-section">
             <h4>Contact</h4>
             <div className="footer-contact">
-              <FiMail /> contact@emploipro.com
+              <FiMail /> contactnexa6@gmail.com
             </div>
             <div className="footer-contact">
-              <FiPhone /> +237 6XX XXX XXX
+              <FiPhone /> +237 672 342 582 / +237 6 56 18 00 51
             </div>
             <div className="footer-contact">
               <FiMapPin /> Douala, Cameroun
@@ -43,7 +43,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2024 EmploiPro. Tous droits réservés.</p>
+          <p>&copy; 2024 NexaDigic. Tous droits réservés.</p>
         </div>
       </div>
     </footer>

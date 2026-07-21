@@ -40,8 +40,8 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          <span className="logo-icon">E</span>
-          <span className="logo-text">EmploiPro</span>
+          <span className="logo-icon">N</span>
+          <span className="logo-text">NexaPro</span>
         </Link>
 
         <div className={`navbar-links ${menuOpen ? 'active' : ''}`}>
