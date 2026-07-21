@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../../services/api';
+import { getMyApplications } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import './Candidate.css';
 
 export default function MyApplications() {
+  const { authUser } = useAuth();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/applications/my-applications').then(res => {
-      setApplications(res.data || []);
-    }).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+    if (!authUser) return;
+    getMyApplications(authUser.id).then(setApplications).catch(() => {}).finally(() => setLoading(false));
+  }, [authUser]);
 
   const statusLabels = {
     pending: { label: 'En attente', class: 'badge-warning' },
@@ -42,7 +43,7 @@ export default function MyApplications() {
             <div key={app.id} className="application-card card">
               <div className="app-card-header">
                 <div className="app-info">
-                  <h3><Link to={`/jobs/${app.jobId}`}>{app.title}</Link></h3>
+                  <h3><Link to={`/jobs/${app.job_id}`}>{app.title}</Link></h3>
                   <div className="app-contacts">
                     <span>{app.company}</span>
                     <span>{app.city}, {app.country}</span>
@@ -54,7 +55,7 @@ export default function MyApplications() {
                 </span>
               </div>
               <div className="app-date" style={{ fontSize: '13px', color: 'var(--gray-400)' }}>
-                Postulé le {new Date(app.createdAt).toLocaleDateString('fr-FR')}
+                Postulé le {new Date(app.created_at).toLocaleDateString('fr-FR')}
               </div>
             </div>
           ))}

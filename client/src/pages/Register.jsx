@@ -23,7 +23,6 @@ export default function Register() {
       setError('Les mots de passe ne correspondent pas');
       return;
     }
-
     if (form.password.length < 6) {
       setError('Le mot de passe doit contenir au moins 6 caractères');
       return;
@@ -31,11 +30,13 @@ export default function Register() {
 
     setLoading(true);
     try {
-      const user = await register(form);
-      if (user.role === 'recruiter') navigate('/recruiter');
-      else navigate('/candidate');
+      const profile = await register(form);
+      if (profile) {
+        if (profile.role === 'recruiter') navigate('/recruiter');
+        else navigate('/candidate');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Erreur lors de l'inscription");
+      setError(err.message || "Erreur lors de l'inscription");
     } finally {
       setLoading(false);
     }
@@ -52,18 +53,10 @@ export default function Register() {
         {error && <div className="auth-error">{error}</div>}
 
         <div className="role-selector">
-          <button
-            className={`role-btn ${form.role === 'candidate' ? 'active' : ''}`}
-            onClick={() => setForm({ ...form, role: 'candidate' })}
-            type="button"
-          >
+          <button className={`role-btn ${form.role === 'candidate' ? 'active' : ''}`} onClick={() => setForm({ ...form, role: 'candidate' })} type="button">
             <FiUser /> Candidat
           </button>
-          <button
-            className={`role-btn ${form.role === 'recruiter' ? 'active' : ''}`}
-            onClick={() => setForm({ ...form, role: 'recruiter' })}
-            type="button"
-          >
+          <button className={`role-btn ${form.role === 'recruiter' ? 'active' : ''}`} onClick={() => setForm({ ...form, role: 'recruiter' })} type="button">
             <FiBriefcase /> Recruteur
           </button>
         </div>
@@ -122,9 +115,7 @@ export default function Register() {
             <div className="input-icon">
               <FiLock />
               <input type={showPass ? 'text' : 'password'} className="form-control" placeholder="Minimum 6 caractères" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
-              <button type="button" className="toggle-pass" onClick={() => setShowPass(!showPass)}>
-                {showPass ? <FiEyeOff /> : <FiEye />}
-              </button>
+              <button type="button" className="toggle-pass" onClick={() => setShowPass(!showPass)}>{showPass ? <FiEyeOff /> : <FiEye />}</button>
             </div>
           </div>
 

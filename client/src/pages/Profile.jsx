@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
+import { updateProfile, changePassword } from '../services/api';
 import './Auth.css';
 
 export default function Profile() {
-  const { user, updateUser } = useAuth();
+  const { user, authUser, updateUser } = useAuth();
   const [form, setForm] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
+    first_name: user?.first_name || '',
+    last_name: user?.last_name || '',
     phone: user?.phone || '',
     bio: user?.bio || '',
     city: user?.city || '',
     country: user?.country || '',
     company: user?.company || ''
   });
-  const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [passwords, setPasswords] = useState({ newPassword: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [tab, setTab] = useState('profile');
@@ -24,11 +24,11 @@ export default function Profile() {
     setLoading(true);
     setMessage('');
     try {
-      await api.put('/auth/profile', form);
-      updateUser(form);
+      const updated = await updateProfile(authUser.id, form);
+      updateUser(updated);
       setMessage('Profil mis à jour avec succès');
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Erreur');
+      setMessage(error.message || 'Erreur');
     } finally { setLoading(false); }
   };
 
@@ -38,14 +38,18 @@ export default function Profile() {
       setMessage('Les mots de passe ne correspondent pas');
       return;
     }
+    if (passwords.newPassword.length < 6) {
+      setMessage('Le mot de passe doit contenir au moins 6 caractères');
+      return;
+    }
     setLoading(true);
     setMessage('');
     try {
-      await api.put('/auth/change-password', passwords);
+      await changePassword(passwords.newPassword);
       setMessage('Mot de passe modifié avec succès');
-      setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setPasswords({ newPassword: '', confirmPassword: '' });
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Erreur');
+      setMessage(error.message || 'Erreur');
     } finally { setLoading(false); }
   };
 
@@ -68,11 +72,11 @@ export default function Profile() {
           <div className="form-row">
             <div className="form-group">
               <label>Prénom</label>
-              <input className="form-control" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} required />
+              <input className="form-control" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} required />
             </div>
             <div className="form-group">
               <label>Nom</label>
-              <input className="form-control" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} required />
+              <input className="form-control" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} required />
             </div>
           </div>
 
@@ -112,10 +116,6 @@ export default function Profile() {
 
       {tab === 'password' && (
         <form className="post-job-form" onSubmit={handlePasswordChange}>
-          <div className="form-group">
-            <label>Mot de passe actuel</label>
-            <input type="password" className="form-control" value={passwords.currentPassword} onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })} required />
-          </div>
           <div className="form-group">
             <label>Nouveau mot de passe</label>
             <input type="password" className="form-control" value={passwords.newPassword} onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })} required />

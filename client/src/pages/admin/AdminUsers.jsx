@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FiTrash2 } from 'react-icons/fi';
-import api from '../../services/api';
+import { getAllUsers, deleteUser } from '../../services/api';
 import '../recruiter/Recruiter.css';
 
 export default function AdminUsers() {
@@ -8,13 +8,13 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/admin/users').then(res => setUsers(res.data || [])).catch(() => {}).finally(() => setLoading(false));
+    getAllUsers().then(setUsers).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   const handleDelete = async (id) => {
     if (!confirm('Supprimer cet utilisateur ?')) return;
     try {
-      await api.delete(`/admin/users/${id}`);
+      await deleteUser(id);
       setUsers(users.filter(u => u.id !== id));
     } catch (error) {
       alert('Erreur lors de la suppression');
@@ -47,11 +47,11 @@ export default function AdminUsers() {
           <tbody>
             {users.map(user => (
               <tr key={user.id}>
-                <td><strong>{user.firstName} {user.lastName}</strong></td>
+                <td><strong>{user.first_name} {user.last_name}</strong></td>
                 <td>{user.email}</td>
                 <td><span className={`badge ${user.role === 'admin' ? 'badge-danger' : user.role === 'recruiter' ? 'badge-info' : 'badge-success'}`}>{roleLabels[user.role]}</span></td>
                 <td>{user.company || '-'}</td>
-                <td>{new Date(user.createdAt).toLocaleDateString('fr-FR')}</td>
+                <td>{new Date(user.created_at).toLocaleDateString('fr-FR')}</td>
                 <td>
                   {user.role !== 'admin' && (
                     <button className="action-btn red" onClick={() => handleDelete(user.id)}>

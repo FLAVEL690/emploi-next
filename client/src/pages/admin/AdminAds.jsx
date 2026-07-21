@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { FiTrash2, FiPlus, FiUpload, FiImage, FiVideo, FiX } from 'react-icons/fi';
-import api from '../../services/api';
+import { getAdminAds, uploadAdMedia, createAd, updateAd, deleteAd } from '../../services/api';
 import '../recruiter/Recruiter.css';
 import './AdminAds.css';
 
@@ -17,7 +17,7 @@ export default function AdminAds() {
   useEffect(() => { fetchAds(); }, []);
 
   const fetchAds = () => {
-    api.get('/admin/ads').then(res => setAds(res.data || [])).catch(() => {}).finally(() => setLoading(false));
+    getAdminAds().then(setAds).catch(() => {}).finally(() => setLoading(false));
   };
 
   const handleFileSelect = (e) => {
@@ -52,14 +52,15 @@ export default function AdminAds() {
 
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append('media', selectedFile);
-      formData.append('title', form.title);
-      formData.append('linkUrl', form.linkUrl);
-      formData.append('position', form.position);
+      const mediaUrl = await uploadAdMedia(selectedFile);
+      const mediaType = selectedFile.type.startsWith('video/') ? 'video' : 'image';
 
-      await api.post('/admin/ads', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      await createAd({
+        title: form.title,
+        mediaUrl,
+        mediaType,
+        linkUrl: form.linkUrl,
+        position: form.position
       });
 
       setForm({ title: '', linkUrl: '', position: 'banner' });
@@ -67,7 +68,7 @@ export default function AdminAds() {
       setShowForm(false);
       fetchAds();
     } catch (error) {
-      alert(error.response?.data?.message || "Erreur lors de l'upload");
+      alert(error.message || "Erreur lors de l'upload");
     } finally {
       setUploading(false);
     }
@@ -76,7 +77,7 @@ export default function AdminAds() {
   const handleDelete = async (id) => {
     if (!confirm('Supprimer cette publicité ?')) return;
     try {
-      await api.delete(`/admin/ads/${id}`);
+      await deleteAd(id);
       setAds(ads.filter(a => a.id !== id));
     } catch (error) {
       alert('Erreur lors de la suppression');
@@ -85,7 +86,7 @@ export default function AdminAds() {
 
   const toggleActive = async (ad) => {
     try {
-      await api.put(`/admin/ads/${ad.id}`, { ...ad, isActive: ad.isActive ? 0 : 1 });
+      await updateAd(ad.id, { is_active: !ad.is_active });
       fetchAds();
     } catch (error) {
       alert('Erreur');
@@ -192,17 +193,17 @@ export default function AdminAds() {
           {ads.map(ad => (
             <div key={ad.id} className="ad-card card">
               <div className="ad-card-media">
-                {ad.mediaType === 'video' ? (
-                  <video src={`http://localhost:5000${ad.mediaUrl}`} controls />
+                {ad.media_type === 'video' ? (
+                  <video src={ad.media_url} controls />
                 ) : (
-                  <img src={`http://localhost:5000${ad.mediaUrl}`} alt={ad.title} />
+                  <img src={ad.media_url} alt={ad.title} />
                 )}
               </div>
               <div className="ad-card-content">
                 <div className="ad-card-header">
                   <h4>{ad.title}</h4>
-                  <span className={`badge ${ad.mediaType === 'video' ? 'badge-info' : 'badge-primary'}`}>
-                    {ad.mediaType === 'video' ? <><FiVideo size={11} /> Vidéo</> : <><FiImage size={11} /> Image</>}
+                  <span className={`badge ${ad.media_type === 'video' ? 'badge-info' : 'badge-primary'}`}>
+                    {ad.media_type === 'video' ? <><FiVideo size={11} /> Vidéo</> : <><FiImage size={11} /> Image</>}
                   </span>
                 </div>
                 <div className="ad-card-meta">
@@ -210,11 +211,11 @@ export default function AdminAds() {
                     {ad.position === 'banner' ? 'Bannière' : ad.position === 'sidebar' ? 'Latérale' : 'Intégré'}
                   </span>
                   <button
-                    className={`badge ${ad.isActive ? 'badge-success' : 'badge-danger'}`}
+                    className={`badge ${ad.is_active ? 'badge-success' : 'badge-danger'}`}
                     onClick={() => toggleActive(ad)}
                     style={{ cursor: 'pointer', border: 'none' }}
                   >
-                    {ad.isActive ? 'Active' : 'Inactive'}
+                    {ad.is_active ? 'Active' : 'Inactive'}
                   </button>
                 </div>
                 <div className="ad-card-actions">

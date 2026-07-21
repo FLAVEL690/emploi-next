@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FiUsers, FiBriefcase, FiFileText, FiImage, FiTrendingUp } from 'react-icons/fi';
-import api from '../../services/api';
+import { getAdminStats } from '../../services/api';
 import '../recruiter/Recruiter.css';
 
 export default function AdminDashboard() {
@@ -8,7 +8,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/admin/stats').then(res => setStats(res.data)).catch(() => {}).finally(() => setLoading(false));
+    getAdminStats().then(setStats).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   if (loading) return <div className="loading-spinner"><div className="spinner"></div></div>;

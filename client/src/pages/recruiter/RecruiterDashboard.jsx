@@ -1,21 +1,23 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiBriefcase, FiUsers, FiEye, FiPlusCircle } from 'react-icons/fi';
-import api from '../../services/api';
+import { getMyJobs } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import './Recruiter.css';
 
 export default function RecruiterDashboard() {
+  const { authUser } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/jobs/recruiter/my-jobs').then(res => {
-      setJobs(res.data || []);
-    }).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+    if (authUser) {
+      getMyJobs(authUser.id).then(setJobs).catch(() => {}).finally(() => setLoading(false));
+    }
+  }, [authUser]);
 
   const totalApps = jobs.reduce((sum, j) => sum + (j.applicationCount || 0), 0);
-  const activeJobs = jobs.filter(j => j.isActive && new Date(j.expiresAt) > new Date()).length;
+  const activeJobs = jobs.filter(j => j.is_active && new Date(j.expires_at) > new Date()).length;
   const totalViews = jobs.reduce((sum, j) => sum + (j.views || 0), 0);
 
   if (loading) return <div className="loading-spinner"><div className="spinner"></div></div>;
@@ -53,9 +55,7 @@ export default function RecruiterDashboard() {
 
       <div className="section-header-row">
         <h2>Mes offres récentes</h2>
-        <Link to="/recruiter/post-job" className="btn btn-primary btn-sm">
-          <FiPlusCircle /> Nouvelle offre
-        </Link>
+        <Link to="/recruiter/post-job" className="btn btn-primary btn-sm"><FiPlusCircle /> Nouvelle offre</Link>
       </div>
 
       {jobs.length === 0 ? (
@@ -67,31 +67,15 @@ export default function RecruiterDashboard() {
       ) : (
         <div className="jobs-table">
           <table>
-            <thead>
-              <tr>
-                <th>Poste</th>
-                <th>Candidatures</th>
-                <th>Vues</th>
-                <th>Statut</th>
-                <th>Expiration</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Poste</th><th>Candidatures</th><th>Vues</th><th>Statut</th><th>Expiration</th></tr></thead>
             <tbody>
               {jobs.slice(0, 5).map(job => (
                 <tr key={job.id}>
-                  <td>
-                    <Link to={`/recruiter/jobs/${job.id}`} className="job-link">{job.title}</Link>
-                    <small>{job.company}</small>
-                  </td>
+                  <td><Link to={`/recruiter/jobs/${job.id}`} className="job-link">{job.title}</Link><small>{job.company}</small></td>
                   <td><span className="badge badge-info">{job.applicationCount || 0}</span></td>
                   <td>{job.views || 0}</td>
-                  <td>
-                    {job.isActive && new Date(job.expiresAt) > new Date()
-                      ? <span className="badge badge-success">Active</span>
-                      : <span className="badge badge-danger">Expirée</span>
-                    }
-                  </td>
-                  <td>{new Date(job.expiresAt).toLocaleDateString('fr-FR')}</td>
+                  <td>{job.is_active && new Date(job.expires_at) > new Date() ? <span className="badge badge-success">Active</span> : <span className="badge badge-danger">Expirée</span>}</td>
+                  <td>{new Date(job.expires_at).toLocaleDateString('fr-FR')}</td>
                 </tr>
               ))}
             </tbody>

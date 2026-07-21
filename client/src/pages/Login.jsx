@@ -17,12 +17,12 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      const user = await login(form.email, form.password);
-      if (user.role === 'admin') navigate('/admin');
-      else if (user.role === 'recruiter') navigate('/recruiter');
+      const profile = await login(form.email, form.password);
+      if (profile.role === 'admin') navigate('/admin');
+      else if (profile.role === 'recruiter') navigate('/recruiter');
       else navigate('/candidate');
     } catch (err) {
-      setError(err.response?.data?.message || 'Erreur de connexion');
+      setError(err.message || 'Erreur de connexion');
     } finally {
       setLoading(false);
     }
@@ -43,14 +43,7 @@ export default function Login() {
             <label>Email</label>
             <div className="input-icon">
               <FiMail />
-              <input
-                type="email"
-                className="form-control"
-                placeholder="votre@email.com"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                required
-              />
+              <input type="email" className="form-control" placeholder="votre@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
             </div>
           </div>
 
@@ -58,14 +51,7 @@ export default function Login() {
             <label>Mot de passe</label>
             <div className="input-icon">
               <FiLock />
-              <input
-                type={showPass ? 'text' : 'password'}
-                className="form-control"
-                placeholder="Votre mot de passe"
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                required
-              />
+              <input type={showPass ? 'text' : 'password'} className="form-control" placeholder="Votre mot de passe" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
               <button type="button" className="toggle-pass" onClick={() => setShowPass(!showPass)}>
                 {showPass ? <FiEyeOff /> : <FiEye />}
               </button>

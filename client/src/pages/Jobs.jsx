@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FiSearch, FiFilter, FiX } from 'react-icons/fi';
-import api from '../services/api';
+import { getJobs, getCategories } from '../services/api';
 import JobCard from '../components/jobs/JobCard';
 import './Jobs.css';
 
 export default function Jobs() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [jobs, setJobs] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategoriesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -26,24 +26,18 @@ export default function Jobs() {
   });
 
   useEffect(() => {
-    api.get('/jobs/categories').then(res => setCategories(res.data || [])).catch(() => {});
+    getCategories().then(setCategoriesList).catch(() => {});
   }, []);
 
-  useEffect(() => {
-    fetchJobs();
-  }, [filters]);
+  useEffect(() => { fetchJobs(); }, [filters]);
 
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      Object.entries(filters).forEach(([key, val]) => {
-        if (val) params.set(key, val);
-      });
-      const res = await api.get(`/jobs?${params.toString()}`);
-      setJobs(res.data.jobs || []);
-      setTotal(res.data.total || 0);
-      setTotalPages(res.data.totalPages || 1);
+      const res = await getJobs(filters);
+      setJobs(res.jobs || []);
+      setTotal(res.total || 0);
+      setTotalPages(res.totalPages || 1);
     } catch (error) {
       console.error(error);
     } finally {

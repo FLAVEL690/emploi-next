@@ -45,10 +45,10 @@ export default function DashboardLayout() {
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
           <div className="sidebar-avatar">
-            {user?.firstName?.[0]}{user?.lastName?.[0]}
+            {user?.first_name?.[0]}{user?.last_name?.[0]}
           </div>
           <div className="sidebar-user-info">
-            <span className="sidebar-name">{user?.firstName} {user?.lastName}</span>
+            <span className="sidebar-name">{user?.first_name} {user?.last_name}</span>
             <span className="sidebar-role">{user?.role === 'admin' ? 'Administrateur' : user?.role === 'recruiter' ? 'Recruteur' : 'Candidat'}</span>
           </div>
         </div>

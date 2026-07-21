@@ -1,22 +1,23 @@
 import { useState, useEffect } from 'react';
 import { FiBell, FiCheckCircle } from 'react-icons/fi';
-import api from '../services/api';
+import { getNotifications, markAllNotificationsRead, markNotificationRead } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import './Notifications.css';
 
 export default function Notifications() {
+  const { authUser } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/notifications').then(res => {
-      setNotifications(res.data || []);
-    }).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+    if (!authUser) return;
+    getNotifications(authUser.id).then(setNotifications).catch(() => {}).finally(() => setLoading(false));
+  }, [authUser]);
 
   const markAllRead = async () => {
     try {
-      await api.put('/notifications/read-all');
-      setNotifications(notifications.map(n => ({ ...n, isRead: 1 })));
+      await markAllNotificationsRead(authUser.id);
+      setNotifications(notifications.map(n => ({ ...n, is_read: true })));
     } catch (error) {
       console.error(error);
     }
@@ -24,8 +25,8 @@ export default function Notifications() {
 
   const markRead = async (id) => {
     try {
-      await api.put(`/notifications/${id}/read`);
-      setNotifications(notifications.map(n => n.id === id ? { ...n, isRead: 1 } : n));
+      await markNotificationRead(id);
+      setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
     } catch (error) {
       console.error(error);
     }
@@ -33,7 +34,7 @@ export default function Notifications() {
 
   if (loading) return <div className="loading-spinner"><div className="spinner"></div></div>;
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
     <div>
@@ -60,13 +61,13 @@ export default function Notifications() {
           {notifications.map(notif => (
             <div
               key={notif.id}
-              className={`notification-item ${!notif.isRead ? 'unread' : ''}`}
-              onClick={() => !notif.isRead && markRead(notif.id)}
+              className={`notification-item ${!notif.is_read ? 'unread' : ''}`}
+              onClick={() => !notif.is_read && markRead(notif.id)}
             >
               <div className="notif-dot"></div>
               <div className="notif-content">
                 <p>{notif.message}</p>
-                <span className="notif-time">{new Date(notif.createdAt).toLocaleString('fr-FR')}</span>
+                <span className="notif-time">{new Date(notif.created_at).toLocaleString('fr-FR')}</span>
               </div>
             </div>
           ))}

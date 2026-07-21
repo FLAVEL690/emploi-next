@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FiMapPin, FiClock, FiBriefcase, FiMonitor, FiCalendar, FiEye, FiHeart, FiArrowLeft, FiDollarSign, FiStar } from 'react-icons/fi';
-import api from '../services/api';
+import { getJobById, applyToJob, toggleSaveJob, checkJobSaved, getMyApplications } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './JobDetail.css';
 
 export default function JobDetail() {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, authUser } = useAuth();
   const navigate = useNavigate();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,24 +17,21 @@ export default function JobDetail() {
   const [saved, setSaved] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
 
-  useEffect(() => {
-    fetchJob();
-  }, [id]);
+  useEffect(() => { fetchJob(); }, [id]);
 
   useEffect(() => {
-    if (user && user.role === 'candidate') {
-      api.get('/saved/check/' + id).then(res => setSaved(res.data.saved)).catch(() => {});
-      api.get('/applications/my-applications').then(res => {
-        const applied = res.data.some(app => app.jobId === parseInt(id));
-        setHasApplied(applied);
+    if (user && user.role === 'candidate' && authUser) {
+      checkJobSaved(authUser.id, id).then(setSaved).catch(() => {});
+      getMyApplications(authUser.id).then(apps => {
+        setHasApplied(apps.some(a => a.job_id === parseInt(id)));
       }).catch(() => {});
     }
-  }, [user, id]);
+  }, [user, authUser, id]);
 
   const fetchJob = async () => {
     try {
-      const res = await api.get(`/jobs/${id}`);
-      setJob(res.data);
+      const data = await getJobById(id);
+      setJob(data);
     } catch (error) {
       navigate('/jobs');
     } finally {
@@ -48,22 +45,22 @@ export default function JobDetail() {
 
     setApplying(true);
     try {
-      await api.post('/applications', { jobId: parseInt(id), coverLetter });
+      await applyToJob(parseInt(id), authUser.id, coverLetter);
       setHasApplied(true);
       setShowApplyModal(false);
       alert('Candidature envoyée avec succès !');
     } catch (error) {
-      alert(error.response?.data?.message || 'Erreur lors de la candidature');
+      alert(error.message || 'Erreur lors de la candidature');
     } finally {
       setApplying(false);
     }
   };
 
-  const toggleSave = async () => {
+  const handleToggleSave = async () => {
     if (!user) { navigate('/login'); return; }
     try {
-      const res = await api.post(`/saved/${id}`);
-      setSaved(res.data.saved);
+      const res = await toggleSaveJob(authUser.id, parseInt(id));
+      setSaved(res.saved);
     } catch (error) {
       console.error(error);
     }
@@ -75,6 +72,8 @@ export default function JobDetail() {
   const modeLabels = { 'on-site': 'Présentiel', 'remote': 'En ligne', 'hybrid': 'Hybride' };
   const typeLabels = { 'full-time': 'Temps plein', 'part-time': 'Temps partiel', 'contract': 'Contrat', 'internship': 'Stage', 'freelance': 'Freelance' };
   const levelLabels = { 'junior': 'Junior', 'mid': 'Intermédiaire', 'senior': 'Senior', 'any': 'Tous niveaux' };
+
+  const recruiter = job.profiles;
 
   return (
     <div className="job-detail-page">
@@ -98,12 +97,12 @@ export default function JobDetail() {
             <div className="job-detail-badges">
               <span className="badge badge-primary"><FiBriefcase /> {typeLabels[job.type]}</span>
               <span className="badge badge-info"><FiMonitor /> {modeLabels[job.mode]}</span>
-              <span className="badge badge-success"><FiStar /> {levelLabels[job.experienceLevel]}</span>
+              <span className="badge badge-success"><FiStar /> {levelLabels[job.experience_level]}</span>
             </div>
 
             <div className="job-detail-info">
               <span><FiMapPin /> {job.city}{job.district ? `, ${job.district}` : ''}, {job.country}</span>
-              <span><FiCalendar /> Expire le {new Date(job.expiresAt).toLocaleDateString('fr-FR')}</span>
+              <span><FiCalendar /> Expire le {new Date(job.expires_at).toLocaleDateString('fr-FR')}</span>
               <span><FiEye /> {job.views} vues</span>
               {job.salary && <span><FiDollarSign /> {job.salary}</span>}
             </div>
@@ -145,7 +144,7 @@ export default function JobDetail() {
                       Postuler maintenant
                     </button>
                   )}
-                  <button className={`btn btn-secondary btn-lg save-btn ${saved ? 'saved' : ''}`} onClick={toggleSave}>
+                  <button className={`btn btn-secondary btn-lg save-btn ${saved ? 'saved' : ''}`} onClick={handleToggleSave}>
                     <FiHeart /> {saved ? 'Sauvegardé' : 'Sauvegarder'}
                   </button>
                 </>
@@ -153,8 +152,8 @@ export default function JobDetail() {
 
               <div className="sidebar-info">
                 <h3>A propos de l'entreprise</h3>
-                <p className="company-name">{job.recruiterCompany || job.company}</p>
-                <p className="recruiter-name">Publié par {job.recruiterFirstName} {job.recruiterLastName}</p>
+                <p className="company-name">{recruiter?.company || job.company}</p>
+                <p className="recruiter-name">Publié par {recruiter?.first_name} {recruiter?.last_name}</p>
               </div>
             </div>
           </div>

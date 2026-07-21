@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FiTrash2 } from 'react-icons/fi';
-import api from '../../services/api';
+import { getAllJobs, deleteJob } from '../../services/api';
 import '../recruiter/Recruiter.css';
 
 export default function AdminJobs() {
@@ -8,13 +8,13 @@ export default function AdminJobs() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/admin/jobs').then(res => setJobs(res.data || [])).catch(() => {}).finally(() => setLoading(false));
+    getAllJobs().then(setJobs).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   const handleDelete = async (id) => {
     if (!confirm('Supprimer cette offre ?')) return;
     try {
-      await api.delete(`/jobs/${id}`);
+      await deleteJob(id);
       setJobs(jobs.filter(j => j.id !== id));
     } catch (error) {
       alert('Erreur lors de la suppression');
@@ -50,7 +50,7 @@ export default function AdminJobs() {
                 <td>{job.recruiterName}</td>
                 <td><span className="badge badge-info">{job.appCount || 0}</span></td>
                 <td>
-                  {job.isActive && new Date(job.expiresAt) > new Date()
+                  {job.is_active && new Date(job.expires_at) > new Date()
                     ? <span className="badge badge-success">Active</span>
                     : <span className="badge badge-danger">Expirée</span>
                   }

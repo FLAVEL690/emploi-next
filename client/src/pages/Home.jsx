@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiSearch, FiUsers, FiBriefcase, FiCheckCircle, FiArrowRight, FiStar, FiTrendingUp, FiShield } from 'react-icons/fi';
-import api from '../services/api';
+import { getJobs, getJobStats, getCategories, getPublicAds } from '../services/api';
 import JobCard from '../components/jobs/JobCard';
 import './Home.css';
 
 export default function Home() {
   const [stats, setStats] = useState({ jobs: 0, companies: 0, candidates: 0 });
   const [recentJobs, setRecentJobs] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategoriesList] = useState([]);
   const [ads, setAds] = useState([]);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/jobs/stats').then(res => setStats(res.data)).catch(() => {});
-    api.get('/jobs?limit=6').then(res => setRecentJobs(res.data.jobs || [])).catch(() => {});
-    api.get('/jobs/categories').then(res => setCategories(res.data || [])).catch(() => {});
-    api.get('/ads/public').then(res => setAds(res.data || [])).catch(() => {});
+    getJobStats().then(setStats).catch(() => {});
+    getJobs({ limit: 6 }).then(res => setRecentJobs(res.jobs || [])).catch(() => {});
+    getCategories().then(setCategoriesList).catch(() => {});
+    getPublicAds().then(setAds).catch(() => {});
   }, []);
 
   const handleSearch = (e) => {
@@ -69,11 +69,11 @@ export default function Home() {
           <div className="container">
             <div className="ads-banner-grid">
               {bannerAds.map(ad => (
-                <a key={ad.id} href={ad.linkUrl || '#'} target={ad.linkUrl ? '_blank' : '_self'} rel="noopener noreferrer" className="ad-banner-item">
-                  {ad.mediaType === 'video' ? (
-                    <video src={`http://localhost:5000${ad.mediaUrl}`} autoPlay muted loop playsInline />
+                <a key={ad.id} href={ad.link_url || '#'} target={ad.link_url ? '_blank' : '_self'} rel="noopener noreferrer" className="ad-banner-item">
+                  {ad.media_type === 'video' ? (
+                    <video src={ad.media_url} autoPlay muted loop playsInline />
                   ) : (
-                    <img src={`http://localhost:5000${ad.mediaUrl}`} alt={ad.title} />
+                    <img src={ad.media_url} alt={ad.title} />
                   )}
                 </a>
               ))}
@@ -81,7 +81,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
 
       <section className="how-it-works">
         <div className="container">
@@ -139,11 +138,11 @@ export default function Home() {
             {sidebarAds.length > 0 && (
               <aside className="home-sidebar-ads">
                 {sidebarAds.map(ad => (
-                  <a key={ad.id} href={ad.linkUrl || '#'} target={ad.linkUrl ? '_blank' : '_self'} rel="noopener noreferrer" className="sidebar-ad-item">
-                    {ad.mediaType === 'video' ? (
-                      <video src={`http://localhost:5000${ad.mediaUrl}`} autoPlay muted loop playsInline />
+                  <a key={ad.id} href={ad.link_url || '#'} target={ad.link_url ? '_blank' : '_self'} rel="noopener noreferrer" className="sidebar-ad-item">
+                    {ad.media_type === 'video' ? (
+                      <video src={ad.media_url} autoPlay muted loop playsInline />
                     ) : (
-                      <img src={`http://localhost:5000${ad.mediaUrl}`} alt={ad.title} />
+                      <img src={ad.media_url} alt={ad.title} />
                     )}
                   </a>
                 ))}
@@ -165,11 +164,11 @@ export default function Home() {
           <div className="container">
             <div className="inline-ads-grid">
               {inlineAds.map(ad => (
-                <a key={ad.id} href={ad.linkUrl || '#'} target={ad.linkUrl ? '_blank' : '_self'} rel="noopener noreferrer" className="inline-ad-item">
-                  {ad.mediaType === 'video' ? (
-                    <video src={`http://localhost:5000${ad.mediaUrl}`} autoPlay muted loop playsInline />
+                <a key={ad.id} href={ad.link_url || '#'} target={ad.link_url ? '_blank' : '_self'} rel="noopener noreferrer" className="inline-ad-item">
+                  {ad.media_type === 'video' ? (
+                    <video src={ad.media_url} autoPlay muted loop playsInline />
                   ) : (
-                    <img src={`http://localhost:5000${ad.mediaUrl}`} alt={ad.title} />
+                    <img src={ad.media_url} alt={ad.title} />
                   )}
                 </a>
               ))}

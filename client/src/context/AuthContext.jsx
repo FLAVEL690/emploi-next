@@ -1,60 +1,89 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../services/api';
+import { supabase } from '../services/supabase';
+import { signUp, signIn, signOut, getProfile } from '../services/api';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
-      api.get('/auth/me').then(res => {
-        setUser(res.data);
-        localStorage.setItem('user', JSON.stringify(res.data));
-      }).catch(() => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        loadProfile(session.user.id);
+      } else {
+        setLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        loadProfile(session.user.id);
+      } else {
         setUser(null);
-      }).finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+        setProfile(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
+  const loadProfile = async (userId) => {
+    try {
+      const p = await getProfile(userId);
+      setProfile(p);
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
-    localStorage.setItem('token', res.data.token);
-    localStorage.setItem('user', JSON.stringify(res.data.user));
-    setUser(res.data.user);
-    return res.data.user;
+    const data = await signIn({ email, password });
+    setUser(data.user);
+    const p = await getProfile(data.user.id);
+    setProfile(p);
+    return p;
   };
 
-  const register = async (data) => {
-    const res = await api.post('/auth/register', data);
-    localStorage.setItem('token', res.data.token);
-    localStorage.setItem('user', JSON.stringify(res.data.user));
-    setUser(res.data.user);
-    return res.data.user;
+  const register = async (formData) => {
+    const data = await signUp(formData);
+    if (data.user) {
+      setUser(data.user);
+      // Le trigger crée le profil automatiquement, on attend un peu
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const p = await getProfile(data.user.id);
+      setProfile(p);
+      return p;
+    }
+    return null;
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  const logout = async () => {
+    await signOut();
     setUser(null);
+    setProfile(null);
   };
 
-  const updateUser = (updatedData) => {
-    const updated = { ...user, ...updatedData };
-    setUser(updated);
-    localStorage.setItem('user', JSON.stringify(updated));
+  const updateUserProfile = (updatedData) => {
+    setProfile(prev => ({ ...prev, ...updatedData }));
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser }}>
+    <AuthContext.Provider value={{
+      user: profile,
+      authUser: user,
+      loading,
+      login,
+      register,
+      logout,
+      updateUser: updateUserProfile
+    }}>
       {children}
     </AuthContext.Provider>
   );

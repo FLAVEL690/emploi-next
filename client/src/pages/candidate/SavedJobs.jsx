@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../../services/api';
+import { getSavedJobs } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import JobCard from '../../components/jobs/JobCard';
 import './Candidate.css';
 
 export default function SavedJobs() {
+  const { authUser } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/saved').then(res => {
-      setJobs(res.data || []);
-    }).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+    if (!authUser) return;
+    getSavedJobs(authUser.id).then(setJobs).catch(() => {}).finally(() => setLoading(false));
+  }, [authUser]);
 
   if (loading) return <div className="loading-spinner"><div className="spinner"></div></div>;
 

@@ -1,23 +1,26 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiFileText, FiHeart, FiBriefcase, FiArrowRight } from 'react-icons/fi';
-import api from '../../services/api';
+import { getMyApplications, getSavedJobs } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import './Candidate.css';
 
 export default function CandidateDashboard() {
+  const { authUser } = useAuth();
   const [applications, setApplications] = useState([]);
   const [saved, setSaved] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!authUser) return;
     Promise.all([
-      api.get('/applications/my-applications'),
-      api.get('/saved')
-    ]).then(([appRes, savedRes]) => {
-      setApplications(appRes.data || []);
-      setSaved(savedRes.data || []);
+      getMyApplications(authUser.id),
+      getSavedJobs(authUser.id)
+    ]).then(([apps, savedJobs]) => {
+      setApplications(apps);
+      setSaved(savedJobs);
     }).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+  }, [authUser]);
 
   const statusCounts = {
     pending: applications.filter(a => a.status === 'pending').length,

@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FiEdit2, FiTrash2, FiEye, FiRefreshCw, FiUsers } from 'react-icons/fi';
-import api from '../../services/api';
+import { FiTrash2, FiEye, FiRefreshCw, FiUsers } from 'react-icons/fi';
+import { getMyJobs, updateJob, deleteJob } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import './Recruiter.css';
 
 export default function MyJobs() {
+  const { authUser } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { fetchJobs(); }, []);
+  useEffect(() => { if (authUser) fetchJobs(); }, [authUser]);
 
   const fetchJobs = async () => {
     try {
-      const res = await api.get('/jobs/recruiter/my-jobs');
-      setJobs(res.data || []);
+      const data = await getMyJobs(authUser.id);
+      setJobs(data);
     } catch (error) {
       console.error(error);
     } finally { setLoading(false); }
@@ -22,7 +24,7 @@ export default function MyJobs() {
   const handleDelete = async (id) => {
     if (!confirm('Supprimer cette offre ?')) return;
     try {
-      await api.delete(`/jobs/${id}`);
+      await deleteJob(id);
       setJobs(jobs.filter(j => j.id !== id));
     } catch (error) {
       alert('Erreur lors de la suppression');
@@ -30,10 +32,10 @@ export default function MyJobs() {
   };
 
   const handleReactivate = async (job) => {
-    const newDate = prompt('Nouvelle date d\'expiration (AAAA-MM-JJ):');
+    const newDate = prompt("Nouvelle date d'expiration (AAAA-MM-JJ):");
     if (!newDate) return;
     try {
-      await api.put(`/jobs/${job.id}`, { ...job, expiresAt: newDate, isActive: 1 });
+      await updateJob(job.id, { is_active: true, expires_at: newDate });
       fetchJobs();
       alert('Offre réactivée !');
     } catch (error) {
@@ -54,58 +56,26 @@ export default function MyJobs() {
       </div>
 
       {jobs.length === 0 ? (
-        <div className="empty-state">
-          <h3>Aucune offre</h3>
-          <p>Publiez votre première offre d'emploi</p>
-        </div>
+        <div className="empty-state"><h3>Aucune offre</h3><p>Publiez votre première offre d'emploi</p></div>
       ) : (
         <div className="jobs-table">
           <table>
-            <thead>
-              <tr>
-                <th>Poste</th>
-                <th>Candidatures</th>
-                <th>Vues</th>
-                <th>Statut</th>
-                <th>Expiration</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Poste</th><th>Candidatures</th><th>Vues</th><th>Statut</th><th>Expiration</th><th>Actions</th></tr></thead>
             <tbody>
               {jobs.map(job => {
-                const isExpired = !job.isActive || new Date(job.expiresAt) <= new Date();
+                const isExpired = !job.is_active || new Date(job.expires_at) <= new Date();
                 return (
                   <tr key={job.id}>
-                    <td>
-                      <span className="job-link">{job.title}</span>
-                      <small>{job.city}, {job.country}</small>
-                    </td>
-                    <td>
-                      <Link to={`/recruiter/jobs/${job.id}`} className="badge badge-info">
-                        <FiUsers size={12} /> {job.applicationCount || 0}
-                      </Link>
-                    </td>
+                    <td><span className="job-link">{job.title}</span><small>{job.city}, {job.country}</small></td>
+                    <td><Link to={`/recruiter/jobs/${job.id}`} className="badge badge-info"><FiUsers size={12} /> {job.applicationCount || 0}</Link></td>
                     <td>{job.views || 0}</td>
-                    <td>
-                      {isExpired
-                        ? <span className="badge badge-danger">Expirée</span>
-                        : <span className="badge badge-success">Active</span>
-                      }
-                    </td>
-                    <td>{new Date(job.expiresAt).toLocaleDateString('fr-FR')}</td>
+                    <td>{isExpired ? <span className="badge badge-danger">Expirée</span> : <span className="badge badge-success">Active</span>}</td>
+                    <td>{new Date(job.expires_at).toLocaleDateString('fr-FR')}</td>
                     <td>
                       <div className="table-actions">
-                        <Link to={`/recruiter/jobs/${job.id}`} className="action-btn" title="Voir candidatures">
-                          <FiEye />
-                        </Link>
-                        {isExpired && (
-                          <button className="action-btn green" title="Réactiver" onClick={() => handleReactivate(job)}>
-                            <FiRefreshCw />
-                          </button>
-                        )}
-                        <button className="action-btn red" title="Supprimer" onClick={() => handleDelete(job.id)}>
-                          <FiTrash2 />
-                        </button>
+                        <Link to={`/recruiter/jobs/${job.id}`} className="action-btn" title="Voir candidatures"><FiEye /></Link>
+                        {isExpired && <button className="action-btn green" title="Réactiver" onClick={() => handleReactivate(job)}><FiRefreshCw /></button>}
+                        <button className="action-btn red" title="Supprimer" onClick={() => handleDelete(job.id)}><FiTrash2 /></button>
                       </div>
                     </td>
                   </tr>

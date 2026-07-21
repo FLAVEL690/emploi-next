@@ -40,7 +40,7 @@ export default function JobCard({ job }) {
 
       <div className="job-card-details">
         <span><FiMapPin size={14} /> {job.city}, {job.country}</span>
-        <span><FiClock size={14} /> {timeAgo(job.createdAt)}</span>
+        <span><FiClock size={14} /> {timeAgo(job.created_at)}</span>
       </div>
 
       {job.salary && <p className="job-card-salary">{job.salary}</p>}
