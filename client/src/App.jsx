@@ -21,6 +21,9 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminJobs from './pages/admin/AdminJobs';
 import AdminAds from './pages/admin/AdminAds';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import WhatsAppButton from './components/common/WhatsAppButton';
 import './index.css';
 import './App.css';
 
@@ -38,6 +41,7 @@ function PublicLayout({ children }) {
       <Navbar />
       {children}
       <Footer />
+      <WhatsAppButton />
     </>
   );
 }
@@ -50,6 +54,8 @@ function App() {
           <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
           <Route path="/jobs" element={<PublicLayout><Jobs /></PublicLayout>} />
           <Route path="/jobs/:id" element={<PublicLayout><JobDetail /></PublicLayout>} />
+          <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+          <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
           <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
           <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
 

@@ -12,7 +12,9 @@ export default function PostJob() {
   const [form, setForm] = useState({
     title: '', description: '', category: '', type: 'full-time', mode: 'on-site',
     salary: '', country: '', city: '', district: '', requirements: '',
-    benefits: '', experienceLevel: 'any', expiresAt: ''
+    benefits: '', experienceLevel: 'any', expiresAt: '',
+    requireCv: true, requireCoverLetter: false, otherDocuments: '',
+    applicationMethod: 'platform', whatsappNumber: '', contactEmail: ''
   });
 
   useEffect(() => { getCategories().then(setCategoriesList).catch(() => {}); }, []);
@@ -117,6 +119,55 @@ export default function PostJob() {
           <label>Date d'expiration *</label>
           <input type="date" className="form-control" value={form.expiresAt} onChange={(e) => update('expiresAt', e.target.value)} required min={new Date().toISOString().split('T')[0]} />
         </div>
+
+        <div className="form-section">
+          <h3>Documents requis pour postuler</h3>
+          <div className="checkbox-group">
+            <label className="checkbox-label">
+              <input type="checkbox" checked={form.requireCv} onChange={(e) => update('requireCv', e.target.checked)} />
+              CV (Curriculum Vitae)
+            </label>
+            <label className="checkbox-label">
+              <input type="checkbox" checked={form.requireCoverLetter} onChange={(e) => update('requireCoverLetter', e.target.checked)} />
+              Lettre de motivation
+            </label>
+          </div>
+          <div className="form-group" style={{ marginTop: '12px' }}>
+            <label>Autres documents demandés (optionnel)</label>
+            <input className="form-control" placeholder="Ex: Diplôme, certificat, portfolio, permis de conduire..." value={form.otherDocuments} onChange={(e) => update('otherDocuments', e.target.value)} />
+          </div>
+        </div>
+
+        <div className="form-section">
+          <h3>Mode de réception des candidatures</h3>
+          <div className="radio-group">
+            <label className="radio-label">
+              <input type="radio" name="applicationMethod" value="platform" checked={form.applicationMethod === 'platform'} onChange={(e) => update('applicationMethod', e.target.value)} />
+              Via la plateforme (par défaut)
+            </label>
+            <label className="radio-label">
+              <input type="radio" name="applicationMethod" value="whatsapp" checked={form.applicationMethod === 'whatsapp'} onChange={(e) => update('applicationMethod', e.target.value)} />
+              Par WhatsApp
+            </label>
+            <label className="radio-label">
+              <input type="radio" name="applicationMethod" value="email" checked={form.applicationMethod === 'email'} onChange={(e) => update('applicationMethod', e.target.value)} />
+              Par Email
+            </label>
+          </div>
+          {form.applicationMethod === 'whatsapp' && (
+            <div className="form-group" style={{ marginTop: '12px' }}>
+              <label>Numéro WhatsApp *</label>
+              <input className="form-control" placeholder="Ex: +237 6XX XXX XXX" value={form.whatsappNumber} onChange={(e) => update('whatsappNumber', e.target.value)} required />
+            </div>
+          )}
+          {form.applicationMethod === 'email' && (
+            <div className="form-group" style={{ marginTop: '12px' }}>
+              <label>Adresse email *</label>
+              <input type="email" className="form-control" placeholder="recrutement@entreprise.com" value={form.contactEmail} onChange={(e) => update('contactEmail', e.target.value)} required />
+            </div>
+          )}
+        </div>
+
         <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ marginTop: '8px' }}>
           {loading ? 'Publication...' : "Publier l'offre"}
         </button>

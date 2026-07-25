@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiSearch, FiUsers, FiBriefcase, FiCheckCircle, FiArrowRight, FiStar, FiTrendingUp, FiShield } from 'react-icons/fi';
+import { FiSearch, FiUsers, FiBriefcase, FiCheckCircle, FiArrowRight, FiStar, FiTrendingUp, FiShield, FiZap } from 'react-icons/fi';
 import { getJobs, getJobStats, getCategories, getPublicAds } from '../services/api';
 import JobCard from '../components/jobs/JobCard';
 import './Home.css';
@@ -33,8 +33,8 @@ export default function Home() {
     <div className="home">
       <section className="hero">
         <div className="hero-content">
-          <h1>Trouvez le <span className="highlight">job idéal</span> qui correspond à vos ambitions</h1>
-          <p className="hero-subtitle">Des milliers d'offres d'emploi vous attendent. Connectez-vous avec les meilleurs recruteurs et lancez votre carrière.</p>
+          <h1>Trouvez le <span className="highlight">job idéal</span> qui transformera votre carrière</h1>
+          <p className="hero-subtitle">Rejoignez la plateforme qui connecte les meilleurs talents aux entreprises les plus innovantes. Votre prochaine opportunité est ici.</p>
 
           <form className="hero-search" onSubmit={handleSearch}>
             <FiSearch className="search-icon" />
@@ -196,21 +196,22 @@ export default function Home() {
       <section className="features">
         <div className="container">
           <h2 className="section-title">Pourquoi NexadigicPro ?</h2>
+          <p className="section-subtitle">La plateforme de confiance pour votre carrière</p>
           <div className="features-grid">
             <div className="feature-card">
-              <FiTrendingUp className="feature-icon" />
-              <h3>Performance</h3>
-              <p>Plateforme rapide et intuitive pour une expérience optimale</p>
+              <FiZap className="feature-icon" />
+              <h3>Rapide & Efficace</h3>
+              <p>Postulez en un clic. Recevez des réponses rapidement grâce à notre système intelligent.</p>
             </div>
             <div className="feature-card">
               <FiShield className="feature-icon" />
-              <h3>Fiabilité</h3>
-              <p>Offres vérifiées et entreprises authentiques pour votre sécurité</p>
+              <h3>100% Fiable</h3>
+              <p>Chaque offre est vérifiée. Chaque entreprise est authentifiée pour votre sécurité.</p>
             </div>
             <div className="feature-card">
-              <FiStar className="feature-icon" />
-              <h3>Qualité</h3>
-              <p>Les meilleures opportunités sélectionnées pour vous</p>
+              <FiTrendingUp className="feature-icon" />
+              <h3>Opportunités Premium</h3>
+              <p>Accédez aux meilleures offres du marché, sélectionnées par nos experts.</p>
             </div>
           </div>
         </div>
@@ -219,10 +220,10 @@ export default function Home() {
       <section className="cta-section">
         <div className="container">
           <div className="cta-content">
-            <h2>Prêt à trouver votre prochain emploi ?</h2>
-            <p>Rejoignez des milliers de candidats et recruteurs sur NexadigicPro</p>
+            <h2>Prêt à transformer votre carrière ?</h2>
+            <p>Rejoignez des milliers de professionnels qui ont trouvé leur emploi idéal sur NexadigicPro</p>
             <div className="cta-buttons">
-              <Link to="/register" className="btn btn-primary btn-lg">Créer un compte gratuit</Link>
+              <Link to="/register" className="btn btn-primary btn-lg">Commencer gratuitement</Link>
               <Link to="/jobs" className="btn btn-secondary btn-lg">Explorer les offres</Link>
             </div>
           </div>

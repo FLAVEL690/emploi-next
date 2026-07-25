@@ -18,8 +18,9 @@ export default function Footer() {
           <div className="footer-section">
             <h4>Liens rapides</h4>
             <Link to="/jobs">Offres d'emploi</Link>
-            <Link to="/register">Créer un compte</Link>
-            <Link to="/login">Se connecter</Link>
+            <Link to="/about">A propos</Link>
+            <Link to="/contact">Contact</Link>
+            <Link to="/register">Creer un compte</Link>
           </div>
 
           <div className="footer-section">

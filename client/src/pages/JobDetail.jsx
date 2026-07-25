@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { FiMapPin, FiClock, FiBriefcase, FiMonitor, FiCalendar, FiEye, FiHeart, FiArrowLeft, FiDollarSign, FiStar } from 'react-icons/fi';
+import { FiMapPin, FiClock, FiBriefcase, FiMonitor, FiCalendar, FiEye, FiHeart, FiArrowLeft, FiDollarSign, FiStar, FiPhone, FiMail, FiFileText } from 'react-icons/fi';
 import { getJobById, applyToJob, toggleSaveJob, checkJobSaved, getMyApplications } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './JobDetail.css';
@@ -139,6 +139,24 @@ export default function JobDetail() {
                     <button className="btn btn-lg" style={{ width: '100%', background: 'var(--gray-200)', color: 'var(--gray-600)' }} disabled>
                       Candidature envoyée
                     </button>
+                  ) : job.application_method === 'whatsapp' && job.whatsapp_number ? (
+                    <a
+                      href={`https://wa.me/${job.whatsapp_number.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Bonjour, je souhaite postuler pour le poste "${job.title}" publié sur votre plateforme. Veuillez trouver ma candidature ci-jointe.`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary btn-lg"
+                      style={{ width: '100%', textAlign: 'center' }}
+                    >
+                      <FiPhone /> Postuler via WhatsApp
+                    </a>
+                  ) : job.application_method === 'email' && job.contact_email ? (
+                    <a
+                      href={`mailto:${job.contact_email}?subject=${encodeURIComponent(`Candidature - ${job.title}`)}&body=${encodeURIComponent(`Bonjour,\n\nJe souhaite postuler pour le poste "${job.title}" publié sur votre plateforme.\n\nVeuillez trouver ma candidature ci-jointe.\n\nCordialement`)}`}
+                      className="btn btn-primary btn-lg"
+                      style={{ width: '100%', textAlign: 'center' }}
+                    >
+                      <FiMail /> Postuler par Email
+                    </a>
                   ) : (
                     <button className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={() => setShowApplyModal(true)}>
                       Postuler maintenant
@@ -149,6 +167,17 @@ export default function JobDetail() {
                   </button>
                 </>
               ) : null}
+
+              {(job.require_cv || job.require_cover_letter || job.other_documents) && (
+                <div className="sidebar-info">
+                  <h3><FiFileText /> Documents requis</h3>
+                  <ul className="required-docs-list">
+                    {job.require_cv && <li>CV (Curriculum Vitae)</li>}
+                    {job.require_cover_letter && <li>Lettre de motivation</li>}
+                    {job.other_documents && <li>{job.other_documents}</li>}
+                  </ul>
+                </div>
+              )}
 
               <div className="sidebar-info">
                 <h3>A propos de l'entreprise</h3>
@@ -164,14 +193,27 @@ export default function JobDetail() {
             <div className="modal" onClick={(e) => e.stopPropagation()}>
               <h2>Postuler - {job.title}</h2>
               <p className="modal-subtitle">Chez {job.company}</p>
+
+              {(job.require_cv || job.require_cover_letter || job.other_documents) && (
+                <div className="apply-docs-notice">
+                  <strong>Documents demandés :</strong>
+                  <ul>
+                    {job.require_cv && <li>CV (Curriculum Vitae)</li>}
+                    {job.require_cover_letter && <li>Lettre de motivation</li>}
+                    {job.other_documents && <li>{job.other_documents}</li>}
+                  </ul>
+                </div>
+              )}
+
               <div className="form-group">
-                <label>Lettre de motivation (optionnel)</label>
+                <label>Lettre de motivation {job.require_cover_letter ? '*' : '(optionnel)'}</label>
                 <textarea
                   className="form-control"
                   rows={6}
                   placeholder="Expliquez pourquoi vous êtes le candidat idéal..."
                   value={coverLetter}
                   onChange={(e) => setCoverLetter(e.target.value)}
+                  required={job.require_cover_letter}
                 />
               </div>
               <div className="modal-actions">

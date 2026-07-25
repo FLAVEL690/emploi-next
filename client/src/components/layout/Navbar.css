@@ -1,10 +1,12 @@
 .navbar {
-  background: var(--white);
-  border-bottom: 1px solid var(--gray-200);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
 }
 
 .navbar-container {
@@ -14,45 +16,78 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
+  height: 68px;
 }
 
 .navbar-logo {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 20px;
+  transition: var(--transition);
+}
+
+.navbar-logo:hover {
+  transform: scale(1.02);
 }
 
 .logo-icon {
-  width: 36px;
-  height: 36px;
-  background: var(--primary);
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: var(--white);
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 900;
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.25);
 }
 
 .logo-text {
-  color: var(--primary);
+  color: var(--gray-900);
+  letter-spacing: -0.02em;
 }
 
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
 }
 
 .navbar-links > a {
   font-size: 14px;
   font-weight: 500;
   color: var(--gray-600);
-  transition: color 0.2s;
+  transition: var(--transition);
+  position: relative;
+  padding: 4px 0;
+}
+
+.navbar-links > a:not(.btn)::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.navbar-links > a:not(.btn):hover::after {
+  width: 100%;
+}
+
+.navbar-links a.btn-primary {
+  color: var(--white);
+}
+
+.navbar-links a.btn-secondary {
+  color: var(--primary);
 }
 
 .navbar-links > a:hover {
@@ -66,11 +101,11 @@
 .user-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: none;
-  padding: 4px 8px;
-  border-radius: var(--radius);
-  transition: background 0.2s;
+  padding: 6px 10px;
+  border-radius: var(--radius-lg);
+  transition: var(--transition);
 }
 
 .user-btn:hover {
@@ -78,35 +113,37 @@
 }
 
 .user-avatar {
-  width: 34px;
-  height: 34px;
-  background: var(--primary);
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: var(--white);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(27, 94, 32, 0.25);
 }
 
 .user-name {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--gray-700);
 }
 
 .user-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 10px);
   right: 0;
   background: var(--white);
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  min-width: 200px;
+  box-shadow: var(--shadow-xl);
+  min-width: 210px;
   padding: 8px;
   z-index: 100;
+  animation: fadeInUp 0.2s ease-out;
 }
 
 .user-dropdown a,
@@ -115,18 +152,19 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 10px 12px;
+  padding: 10px 14px;
   font-size: 14px;
   color: var(--gray-700);
   border-radius: var(--radius);
   background: none;
   text-align: left;
-  transition: background 0.15s;
+  transition: var(--transition);
+  font-weight: 500;
 }
 
 .user-dropdown a:hover,
 .user-dropdown button:hover {
-  background: var(--gray-100);
+  background: var(--primary-50);
   color: var(--primary);
 }
 
@@ -134,6 +172,13 @@
   display: none;
   background: none;
   color: var(--gray-700);
+  padding: 8px;
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+
+.menu-toggle:hover {
+  background: var(--gray-100);
 }
 
 @media (max-width: 768px) {
@@ -143,19 +188,20 @@
 
   .navbar-links {
     position: fixed;
-    top: 64px;
+    top: 68px;
     left: 0;
     right: 0;
-    background: var(--white);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(12px);
     flex-direction: column;
-    padding: 20px;
+    padding: 24px;
     gap: 16px;
     border-bottom: 1px solid var(--gray-200);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-100%);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-110%);
     opacity: 0;
     pointer-events: none;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .navbar-links.active {

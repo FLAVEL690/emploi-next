@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
   --primary: #1B5E20;
@@ -6,6 +6,9 @@
   --primary-dark: #0D3B13;
   --primary-50: #E8F5E9;
   --primary-100: #C8E6C9;
+  --accent: #FF6B35;
+  --accent-light: #FF8A5C;
+  --accent-50: #FFF3ED;
   --white: #FFFFFF;
   --gray-50: #F8FAFC;
   --gray-100: #F1F5F9;
@@ -22,12 +25,15 @@
   --danger: #DC2626;
   --info: #2563EB;
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
-  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.08), 0 4px 10px rgba(0,0,0,0.04);
+  --shadow-xl: 0 20px 40px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.06);
   --radius: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -42,6 +48,7 @@ body {
   background: var(--gray-50);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -74,50 +81,69 @@ input, select, textarea {
   gap: 8px;
   padding: 10px 20px;
   border-radius: var(--radius);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
-  transition: all 0.2s ease;
+  transition: var(--transition);
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+
+.btn:hover::after {
+  transform: translateX(100%);
 }
 
 .btn-primary {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
   color: var(--white);
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
 }
 
 .btn-primary:hover {
-  background: var(--primary-light);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(27, 94, 32, 0.4);
 }
 
 .btn-secondary {
   background: var(--white);
   color: var(--primary);
-  border: 1.5px solid var(--primary);
+  border: 2px solid var(--primary);
 }
 
 .btn-secondary:hover {
   background: var(--primary-50);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-danger {
-  background: var(--danger);
+  background: linear-gradient(135deg, var(--danger) 0%, #EF4444 100%);
   color: var(--white);
 }
 
 .btn-danger:hover {
   background: #B91C1C;
+  transform: translateY(-1px);
 }
 
 .btn-sm {
-  padding: 6px 12px;
+  padding: 6px 14px;
   font-size: 13px;
 }
 
 .btn-lg {
   padding: 14px 28px;
   font-size: 16px;
+  border-radius: var(--radius-lg);
 }
 
 .form-group {
@@ -134,17 +160,17 @@ input, select, textarea {
 
 .form-control {
   width: 100%;
-  padding: 10px 14px;
+  padding: 11px 14px;
   border: 1.5px solid var(--gray-200);
   border-radius: var(--radius);
   font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: var(--transition);
   background: var(--white);
 }
 
 .form-control:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
+  box-shadow: 0 0 0 4px rgba(27, 94, 32, 0.08);
 }
 
 .form-control::placeholder {
@@ -158,14 +184,16 @@ textarea.form-control {
 
 .card {
   background: var(--white);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow);
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: var(--transition);
+  border: 1px solid var(--gray-100);
 }
 
 .card:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--gray-200);
 }
 
 .badge {
@@ -174,7 +202,8 @@ textarea.form-control {
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .badge-primary {
@@ -254,6 +283,31 @@ textarea.form-control {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 .empty-state {

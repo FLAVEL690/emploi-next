@@ -7,6 +7,7 @@ export async function signUp({ email, password, firstName, lastName, role, compa
     email,
     password,
     options: {
+      emailRedirectTo: window.location.origin,
       data: {
         first_name: firstName,
         last_name: lastName,
@@ -19,6 +20,10 @@ export async function signUp({ email, password, firstName, lastName, role, compa
     }
   });
   if (error) throw error;
+  if (data.user && !data.session) {
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (!signInError) return signInData;
+  }
   return data;
 }
 
@@ -126,7 +131,13 @@ export async function createJob(jobData, userId, company) {
       requirements: jobData.requirements || null,
       benefits: jobData.benefits || null,
       experience_level: jobData.experienceLevel || 'any',
-      expires_at: jobData.expiresAt
+      expires_at: jobData.expiresAt,
+      require_cv: jobData.requireCv ?? true,
+      require_cover_letter: jobData.requireCoverLetter ?? false,
+      other_documents: jobData.otherDocuments || null,
+      application_method: jobData.applicationMethod || 'platform',
+      whatsapp_number: jobData.whatsappNumber || null,
+      contact_email: jobData.contactEmail || null
     })
     .select()
     .single();
