@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -27,6 +28,12 @@ import WhatsAppButton from './components/common/WhatsAppButton';
 import './index.css';
 import './App.css';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="loading-spinner"><div className="spinner"></div></div>;
@@ -50,6 +57,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
           <Route path="/jobs" element={<PublicLayout><Jobs /></PublicLayout>} />

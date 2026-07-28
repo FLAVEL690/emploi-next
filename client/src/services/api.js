@@ -59,6 +59,20 @@ export async function updateProfile(userId, updates) {
   return data;
 }
 
+export async function uploadAvatar(userId, file) {
+  const ext = file.name.split('.').pop();
+  const fileName = `avatar_${userId}_${Date.now()}.${ext}`;
+
+  const { data, error } = await supabase.storage
+    .from('avatars')
+    .upload(fileName, file, { contentType: file.type, upsert: true });
+
+  if (error) throw error;
+
+  const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(data.path);
+  return urlData.publicUrl;
+}
+
 export async function changePassword(newPassword) {
   const { error } = await supabase.auth.updateUser({ password: newPassword });
   if (error) throw error;

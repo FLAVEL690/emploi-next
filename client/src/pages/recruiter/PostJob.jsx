@@ -1,29 +1,71 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCategories, createJob } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { FiSave, FiTrash2 } from 'react-icons/fi';
 import './Recruiter.css';
+
+const DRAFT_KEY = 'postjob_draft';
+const INITIAL_FORM = {
+  title: '', description: '', category: '', type: 'full-time', mode: 'on-site',
+  salary: '', country: '', city: '', district: '', requirements: '',
+  benefits: '', experienceLevel: 'any', expiresAt: '',
+  requireCv: true, requireCoverLetter: false, otherDocuments: '',
+  applicationMethod: 'platform', whatsappNumber: '', contactEmail: ''
+};
+
+function loadDraft() {
+  try {
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return null;
+}
 
 export default function PostJob() {
   const navigate = useNavigate();
   const { user, authUser } = useAuth();
   const [categories, setCategoriesList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    title: '', description: '', category: '', type: 'full-time', mode: 'on-site',
-    salary: '', country: '', city: '', district: '', requirements: '',
-    benefits: '', experienceLevel: 'any', expiresAt: '',
-    requireCv: true, requireCoverLetter: false, otherDocuments: '',
-    applicationMethod: 'platform', whatsappNumber: '', contactEmail: ''
-  });
+  const [draftStatus, setDraftStatus] = useState(null);
+  const draft = loadDraft();
+  const [form, setForm] = useState(draft || INITIAL_FORM);
+  const [hasDraft, setHasDraft] = useState(!!draft);
+  const saveTimeout = useRef(null);
 
   useEffect(() => { getCategories().then(setCategoriesList).catch(() => {}); }, []);
+
+  const saveDraft = useCallback((formData) => {
+    const hasContent = formData.title || formData.description || formData.category || formData.country || formData.city;
+    if (!hasContent) return;
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+    setHasDraft(true);
+    setDraftStatus('saved');
+    setTimeout(() => setDraftStatus(null), 2000);
+  }, []);
+
+  const update = (key, value) => {
+    setForm(prev => {
+      const next = { ...prev, [key]: value };
+      if (saveTimeout.current) clearTimeout(saveTimeout.current);
+      saveTimeout.current = setTimeout(() => saveDraft(next), 800);
+      return next;
+    });
+  };
+
+  const clearDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setForm(INITIAL_FORM);
+    setHasDraft(false);
+    setDraftStatus(null);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       await createJob(form, authUser.id, user?.company);
+      localStorage.removeItem(DRAFT_KEY);
       alert('Offre publiée avec succès !');
       navigate('/recruiter/jobs');
     } catch (error) {
@@ -33,13 +75,30 @@ export default function PostJob() {
     }
   };
 
-  const update = (key, value) => setForm(prev => ({ ...prev, [key]: value }));
-
   return (
     <div>
       <div className="page-header">
-        <h1>Publier une nouvelle offre</h1>
-        <p>Remplissez les informations pour publier votre annonce</p>
+        <div className="page-header-row">
+          <div>
+            <h1>Publier une nouvelle offre</h1>
+            <p>Remplissez les informations pour publier votre annonce</p>
+          </div>
+          <div className="draft-actions">
+            {draftStatus === 'saved' && (
+              <span className="draft-indicator">
+                <FiSave size={14} /> Brouillon sauvegardé
+              </span>
+            )}
+            {hasDraft && (
+              <button type="button" className="btn-draft-clear" onClick={clearDraft}>
+                <FiTrash2 size={14} /> Effacer le brouillon
+              </button>
+            )}
+          </div>
+        </div>
+        {hasDraft && !draftStatus && (
+          <p className="draft-notice">Brouillon restauré automatiquement</p>
+        )}
       </div>
 
       <form className="post-job-form" onSubmit={handleSubmit}>

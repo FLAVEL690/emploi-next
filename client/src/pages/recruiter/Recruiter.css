@@ -163,7 +163,57 @@
   cursor: pointer;
 }
 
+.page-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.draft-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.draft-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--success);
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.btn-draft-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-600);
+  background: var(--gray-100);
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+
+.btn-draft-clear:hover {
+  color: var(--danger);
+  background: #FEE2E2;
+}
+
+.draft-notice {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--info);
+  font-style: italic;
+}
+
 @media (max-width: 768px) {
   .stats-grid { grid-template-columns: 1fr; }
   .post-job-form .form-row { grid-template-columns: 1fr; }
+  .page-header-row { flex-direction: column; }
 }

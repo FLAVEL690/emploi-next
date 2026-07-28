@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiMenu, FiX, FiBell, FiUser, FiLogOut, FiGrid } from 'react-icons/fi';
+import { FiMenu, FiX, FiBell, FiUser, FiLogOut, FiGrid, FiLogIn, FiUserPlus } from 'react-icons/fi';
 import './Navbar.css';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -23,6 +24,10 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownOpen]);
 
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -36,6 +41,8 @@ export default function Navbar() {
     return '/candidate';
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -45,15 +52,21 @@ export default function Navbar() {
         </Link>
 
         <div className={`navbar-links ${menuOpen ? 'active' : ''}`}>
-          <Link to="/" onClick={() => setMenuOpen(false)}>Accueil</Link>
-          <Link to="/jobs" onClick={() => setMenuOpen(false)}>Offres</Link>
-          <Link to="/about" onClick={() => setMenuOpen(false)}>A propos</Link>
-          <Link to="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+          <Link to="/" className={isActive('/') ? 'nav-active' : ''}>Accueil</Link>
+          <Link to="/jobs" className={isActive('/jobs') ? 'nav-active' : ''}>Offres</Link>
+          <Link to="/about" className={isActive('/about') ? 'nav-active' : ''}>A propos</Link>
+          <Link to="/contact" className={isActive('/contact') ? 'nav-active' : ''}>Contact</Link>
           {!user && (
-            <>
-              <Link to="/login" className="btn btn-secondary btn-sm" onClick={() => setMenuOpen(false)}>Connexion</Link>
-              <Link to="/register" className="btn btn-primary btn-sm" onClick={() => setMenuOpen(false)}>Inscription</Link>
-            </>
+            <div className="navbar-auth">
+              <Link to="/login" className="nav-btn nav-btn-outline">
+                <FiLogIn size={15} />
+                <span>Connexion</span>
+              </Link>
+              <Link to="/register" className="nav-btn nav-btn-filled">
+                <FiUserPlus size={15} />
+                <span>Inscription</span>
+              </Link>
+            </div>
           )}
           {user && (
             <div className="navbar-user" ref={dropdownRef}>
