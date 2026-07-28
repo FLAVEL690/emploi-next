@@ -24,6 +24,7 @@ import AdminJobs from './pages/admin/AdminJobs';
 import AdminAds from './pages/admin/AdminAds';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import ForgotPassword from './pages/ForgotPassword';
 import WhatsAppButton from './components/common/WhatsAppButton';
 import './index.css';
 import './App.css';
@@ -65,6 +66,7 @@ function App() {
           <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
           <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
           <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
+          <Route path="/forgot-password" element={<PublicLayout><ForgotPassword /></PublicLayout>} />
           <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
 
           <Route path="/recruiter" element={
