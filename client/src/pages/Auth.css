@@ -352,11 +352,9 @@
   margin-bottom: 20px;
 }
 
-.otp-input {
-  text-align: center;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 8px;
+.token-input {
+  font-size: 14px;
+  font-weight: 500;
   padding: 14px;
 }
 

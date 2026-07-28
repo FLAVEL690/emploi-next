@@ -137,16 +137,15 @@ export default function ForgotPassword() {
               <label>Code de vérification</label>
               <input
                 type="text"
-                className="form-control otp-input"
-                placeholder="000000"
+                className="form-control token-input"
+                placeholder="Collez le code reçu par email"
                 value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                maxLength={6}
+                onChange={(e) => setOtp(e.target.value.trim())}
                 required
               />
-              <p className="input-hint">Vérifiez votre boîte de réception et vos spams</p>
+              <p className="input-hint">Copiez-collez le code complet reçu dans votre email (vérifiez aussi les spams)</p>
             </div>
-            <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }} disabled={loading || otp.length < 6}>
+            <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }} disabled={loading || otp.length < 4}>
               {loading ? 'Vérification...' : 'Vérifier le code'}
             </button>
             <button type="button" className="btn-resend" onClick={handleSendCode} disabled={loading}>
