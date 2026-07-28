@@ -21,7 +21,11 @@ export default function JobCard({ job }) {
     <Link to={`/jobs/${job.id}`} className="job-card card">
       <div className="job-card-header">
         <div className="job-company-logo">
-          {job.company?.[0] || 'E'}
+          {job.profiles?.avatar ? (
+            <img src={job.profiles.avatar} alt={job.company} className="company-logo-img" />
+          ) : (
+            job.company?.[0] || 'E'
+          )}
         </div>
         <div className="job-card-meta">
           <h3 className="job-card-title">{job.title}</h3>

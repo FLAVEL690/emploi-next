@@ -107,7 +107,7 @@ export async function getJobs({ category, city, country, district, mode, type, s
 export async function getJobById(id) {
   const { data, error } = await supabase
     .from('jobs')
-    .select('*, profiles!jobs_recruiter_id_fkey(first_name, last_name, email, company, avatar)')
+    .select('*, profiles!jobs_recruiter_id_fkey(first_name, last_name, email, company, avatar, company_description)')
     .eq('id', id)
     .single();
   if (error) throw error;

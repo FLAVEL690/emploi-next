@@ -72,7 +72,11 @@ export default function Navbar() {
             <div className="navbar-user" ref={dropdownRef}>
               <button className="user-btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
                 <div className="user-avatar">
-                  {user.first_name?.[0]}{user.last_name?.[0]}
+                  {user.avatar ? (
+                    <img src={user.avatar} alt="Profil" className="user-avatar-img" />
+                  ) : (
+                    <>{user.first_name?.[0]}{user.last_name?.[0]}</>
+                  )}
                 </div>
                 <span className="user-name">{user.first_name}</span>
               </button>

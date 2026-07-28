@@ -45,7 +45,11 @@ export default function DashboardLayout() {
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
           <div className="sidebar-avatar">
-            {user?.first_name?.[0]}{user?.last_name?.[0]}
+            {user?.avatar ? (
+              <img src={user.avatar} alt="Profil" className="sidebar-avatar-img" />
+            ) : (
+              <>{user?.first_name?.[0]}{user?.last_name?.[0]}</>
+            )}
           </div>
           <div className="sidebar-user-info">
             <span className="sidebar-name">{user?.first_name} {user?.last_name}</span>

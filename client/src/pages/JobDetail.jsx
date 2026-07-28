@@ -86,7 +86,11 @@ export default function JobDetail() {
           <div className="job-detail-main">
             <div className="job-detail-header">
               <div className="job-detail-logo">
-                {job.company?.[0] || 'E'}
+                {recruiter?.avatar ? (
+                  <img src={recruiter.avatar} alt={job.company} className="company-logo-img" />
+                ) : (
+                  job.company?.[0] || 'E'
+                )}
               </div>
               <div>
                 <h1>{job.title}</h1>
@@ -179,9 +183,21 @@ export default function JobDetail() {
                 </div>
               )}
 
-              <div className="sidebar-info">
+              <div className="sidebar-info about-company">
                 <h3>A propos de l'entreprise</h3>
-                <p className="company-name">{recruiter?.company || job.company}</p>
+                <div className="company-header">
+                  <div className="company-avatar">
+                    {recruiter?.avatar ? (
+                      <img src={recruiter.avatar} alt={recruiter?.company || job.company} className="company-avatar-img" />
+                    ) : (
+                      <span>{(recruiter?.company || job.company)?.[0] || 'E'}</span>
+                    )}
+                  </div>
+                  <p className="company-name">{recruiter?.company || job.company}</p>
+                </div>
+                {recruiter?.company_description && (
+                  <p className="company-description">{recruiter.company_description}</p>
+                )}
                 <p className="recruiter-name">Publié par {recruiter?.first_name} {recruiter?.last_name}</p>
               </div>
             </div>
