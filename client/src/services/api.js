@@ -115,7 +115,7 @@ export async function getJobById(id) {
   const viewedKey = `job_viewed_${id}`;
   if (!sessionStorage.getItem(viewedKey)) {
     sessionStorage.setItem(viewedKey, '1');
-    supabase.rpc('increment_job_views', { job_id: id }).catch(() => {});
+    supabase.rpc('increment_job_views', { job_id: id }).catch(() => { });
   }
 
   return data;
@@ -138,7 +138,7 @@ export async function createJob(jobData, userId, company) {
       recruiter_id: userId,
       title: jobData.title,
       description: jobData.description,
-      company: company || jobData.company || 'NexadigicPro',
+      company: company || jobData.company || 'NexJob',
       category: jobData.category,
       type: jobData.type,
       mode: jobData.mode,

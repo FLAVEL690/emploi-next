@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="footer-brand">
             <div className="footer-logo">
               <span className="logo-icon">N</span>
-              <span>NexadigicPro</span>
+              <span>NexJob</span>
             </div>
             <p>La plateforme de recrutement qui connecte les talents aux meilleures opportunités professionnelles.</p>
           </div>
@@ -32,7 +32,7 @@ export default function Footer() {
           <div className="footer-section">
             <h4>Contact</h4>
             <div className="footer-contact">
-              <FiMail /> contactnexa6@gmail.com
+              <FiMail /> contact@nexadigic.cm
             </div>
             <div className="footer-contact">
               <FiPhone /> +237 672 342 582 / +237 6 56 18 00 51

@@ -48,7 +48,7 @@ export default function Navbar() {
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
           <span className="logo-icon">N</span>
-          <span className="logo-text">NexadigicPro</span>
+          <span className="logo-text">NexJob</span>
         </Link>
 
         <div className={`navbar-links ${menuOpen ? 'active' : ''}`}>

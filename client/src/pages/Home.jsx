@@ -14,10 +14,10 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getJobStats().then(setStats).catch(() => {});
-    getJobs({ limit: 6 }).then(res => setRecentJobs(res.jobs || [])).catch(() => {});
-    getCategories().then(setCategoriesList).catch(() => {});
-    getPublicAds().then(setAds).catch(() => {});
+    getJobStats().then(setStats).catch(() => { });
+    getJobs({ limit: 6 }).then(res => setRecentJobs(res.jobs || [])).catch(() => { });
+    getCategories().then(setCategoriesList).catch(() => { });
+    getPublicAds().then(setAds).catch(() => { });
   }, []);
 
   const handleSearch = (e) => {
@@ -195,7 +195,7 @@ export default function Home() {
 
       <section className="features">
         <div className="container">
-          <h2 className="section-title">Pourquoi NexadigicPro ?</h2>
+          <h2 className="section-title">Pourquoi NexJob ?</h2>
           <p className="section-subtitle">La plateforme de confiance pour votre carrière</p>
           <div className="features-grid">
             <div className="feature-card">
@@ -221,7 +221,7 @@ export default function Home() {
         <div className="container">
           <div className="cta-content">
             <h2>Prêt à transformer votre carrière ?</h2>
-            <p>Rejoignez des milliers de professionnels qui ont trouvé leur emploi idéal sur NexadigicPro</p>
+            <p>Rejoignez des milliers de professionnels qui ont trouvé leur emploi idéal sur NexJob</p>
             <div className="cta-buttons">
               <Link to="/register" className="btn btn-primary btn-lg">Commencer gratuitement</Link>
               <Link to="/jobs" className="btn btn-secondary btn-lg">Explorer les offres</Link>
