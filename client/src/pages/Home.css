@@ -451,14 +451,14 @@
 }
 
 .ads-banner {
-  padding: 24px 20px;
+  padding: 32px 20px;
   background: var(--gray-100);
 }
 
 .ads-banner-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
 }
 
 .ad-banner-item {
@@ -477,8 +477,8 @@
 .ad-banner-item img,
 .ad-banner-item video {
   width: 100%;
-  height: 200px;
-  object-fit: contain;
+  height: 350px;
+  object-fit: cover;
   display: block;
   background: var(--gray-100);
 }
@@ -508,21 +508,22 @@
 .sidebar-ad-item video {
   width: 100%;
   height: auto;
-  max-height: 250px;
-  object-fit: contain;
+  min-height: 200px;
+  max-height: 400px;
+  object-fit: cover;
   display: block;
   background: var(--gray-100);
 }
 
 .inline-ads-section {
-  padding: 30px 20px;
+  padding: 40px 20px;
   background: var(--gray-100);
 }
 
 .inline-ads-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
 }
 
 .inline-ad-item {
@@ -541,8 +542,8 @@
 .inline-ad-item img,
 .inline-ad-item video {
   width: 100%;
-  height: 180px;
-  object-fit: contain;
+  height: 300px;
+  object-fit: cover;
   display: block;
   background: var(--gray-100);
 }
@@ -579,5 +580,6 @@
   .cta-content h2 { font-size: 28px; }
   .cta-buttons { flex-direction: column; }
   .ads-banner-grid { grid-template-columns: 1fr; }
-  .ad-banner-item img, .ad-banner-item video { height: 150px; }
+  .ad-banner-item img, .ad-banner-item video { height: 250px; }
+  .inline-ad-item img, .inline-ad-item video { height: 220px; }
 }
