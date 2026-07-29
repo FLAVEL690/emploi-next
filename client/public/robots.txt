@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /recruiter
+Disallow: /candidate
+Disallow: /profile
+Disallow: /notifications
+
+Sitemap: https://nexjob.nexadigic.cm/sitemap.xml

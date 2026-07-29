@@ -18,7 +18,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(ellipse at 60% 40%, rgba(255, 107, 53, 0.06) 0%, transparent 60%);
+  background: radial-gradient(ellipse at 60% 40%, rgba(212, 165, 23, 0.08) 0%, transparent 60%);
   pointer-events: none;
 }
 

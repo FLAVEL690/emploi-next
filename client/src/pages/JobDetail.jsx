@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FiMapPin, FiClock, FiBriefcase, FiMonitor, FiCalendar, FiEye, FiHeart, FiArrowLeft, FiDollarSign, FiStar, FiPhone, FiMail, FiFileText } from 'react-icons/fi';
 import { getJobById, applyToJob, toggleSaveJob, checkJobSaved, getMyApplications } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import SEO from '../components/common/SEO';
 import './JobDetail.css';
 
 export default function JobDetail() {
@@ -75,8 +76,32 @@ export default function JobDetail() {
 
   const recruiter = job.profiles;
 
+  const jobJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    "title": job.title,
+    "description": job.description,
+    "datePosted": job.created_at,
+    "employmentType": job.type === 'full-time' ? 'FULL_TIME' : job.type === 'part-time' ? 'PART_TIME' : job.type === 'internship' ? 'INTERN' : 'CONTRACTOR',
+    "jobLocation": {
+      "@type": "Place",
+      "address": { "@type": "PostalAddress", "addressLocality": job.location || 'Cameroun', "addressCountry": "CM" }
+    },
+    "hiringOrganization": {
+      "@type": "Organization",
+      "name": job.company || 'Entreprise',
+      "sameAs": "https://nexjob.nexadigic.cm/"
+    }
+  };
+
   return (
     <div className="job-detail-page">
+      <SEO
+        title={`${job.title} - ${job.company || 'Emploi'}`}
+        description={`Offre d'emploi: ${job.title} chez ${job.company || 'une entreprise'} à ${job.location || 'Cameroun'}. Postulez maintenant sur NexJob !`}
+        path={`/jobs/${id}`}
+        jsonLd={jobJsonLd}
+      />
       <div className="container">
         <button className="back-btn" onClick={() => navigate(-1)}>
           <FiArrowLeft /> Retour

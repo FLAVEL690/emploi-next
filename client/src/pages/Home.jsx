@@ -4,6 +4,7 @@ import { FiSearch, FiUsers, FiBriefcase, FiCheckCircle, FiArrowRight, FiStar, Fi
 import { getJobs, getJobStats, getCategories, getPublicAds } from '../services/api';
 import JobCard from '../components/jobs/JobCard';
 import AdCarousel from '../components/common/AdCarousel';
+import SEO from '../components/common/SEO';
 import './Home.css';
 
 export default function Home() {
@@ -32,6 +33,11 @@ export default function Home() {
 
   return (
     <div className="home">
+      <SEO
+        title="Accueil - Trouvez le job idéal au Cameroun"
+        description="NexJob est la plateforme de recrutement #1 au Cameroun. Découvrez des milliers d'offres d'emploi à Douala, Yaoundé et partout au Cameroun. Postulez en un clic !"
+        path="/"
+      />
       <section className="hero">
         <div className="hero-content">
           <h1>Trouvez le <span className="highlight">job idéal</span> qui transformera votre carrière</h1>

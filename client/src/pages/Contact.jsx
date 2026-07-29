@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FiMail, FiPhone, FiMapPin, FiSend, FiMessageCircle } from 'react-icons/fi';
+import SEO from '../components/common/SEO';
 import './Contact.css';
 
 export default function Contact() {
@@ -16,6 +17,11 @@ export default function Contact() {
 
   return (
     <div className="contact-page">
+      <SEO
+        title="Contactez-nous"
+        description="Besoin d'aide ou d'informations ? Contactez l'équipe NexJob. Nous sommes disponibles pour répondre à toutes vos questions sur le recrutement au Cameroun."
+        path="/contact"
+      />
       <section className="contact-hero">
         <div className="container">
           <h1>Contactez-nous</h1>

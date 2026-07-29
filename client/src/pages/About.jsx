@@ -1,9 +1,15 @@
 import { FiTarget, FiHeart, FiGlobe, FiUsers, FiAward, FiTrendingUp } from 'react-icons/fi';
+import SEO from '../components/common/SEO';
 import './About.css';
 
 export default function About() {
   return (
     <div className="about-page">
+      <SEO
+        title="A propos de NexJob"
+        description="Découvrez NexJob, la plateforme de recrutement qui connecte les meilleurs talents aux entreprises au Cameroun. Notre mission, notre équipe et nos valeurs."
+        path="/about"
+      />
       <section className="about-hero">
         <div className="container">
           <h1>A propos de <span className="highlight">NexJob</span></h1>

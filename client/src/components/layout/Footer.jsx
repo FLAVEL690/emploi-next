@@ -9,8 +9,7 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <div className="footer-logo">
-              <span className="logo-icon">N</span>
-              <span>NexJob</span>
+              <img src="/logo_nexjob.png" alt="NexJob" className="footer-logo-img" />
             </div>
             <p>La plateforme de recrutement qui connecte les talents aux meilleures opportunités professionnelles.</p>
           </div>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
@@ -26,6 +26,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import ForgotPassword from './pages/ForgotPassword';
 import WhatsAppButton from './components/common/WhatsAppButton';
+import LoadingScreen from './components/common/LoadingScreen';
 import './index.css';
 import './App.css';
 
@@ -54,13 +55,25 @@ function PublicLayout({ children }) {
   );
 }
 
+function HomeWithLoading() {
+  const [showLoading, setShowLoading] = useState(true);
+  const handleFinish = useCallback(() => setShowLoading(false), []);
+
+  return (
+    <>
+      {showLoading && <LoadingScreen onFinish={handleFinish} />}
+      <PublicLayout><Home /></PublicLayout>
+    </>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+          <Route path="/" element={<HomeWithLoading />} />
           <Route path="/jobs" element={<PublicLayout><Jobs /></PublicLayout>} />
           <Route path="/jobs/:id" element={<PublicLayout><JobDetail /></PublicLayout>} />
           <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
