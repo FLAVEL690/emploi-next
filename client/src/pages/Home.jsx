@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiSearch, FiUsers, FiBriefcase, FiCheckCircle, FiArrowRight, FiStar, FiTrendingUp, FiShield, FiZap } from 'react-icons/fi';
 import { getJobs, getJobStats, getCategories, getPublicAds } from '../services/api';
 import JobCard from '../components/jobs/JobCard';
+import AdCarousel from '../components/common/AdCarousel';
 import './Home.css';
 
 export default function Home() {
@@ -67,17 +68,7 @@ export default function Home() {
       {bannerAds.length > 0 && (
         <section className="ads-banner">
           <div className="container">
-            <div className="ads-banner-grid">
-              {bannerAds.map(ad => (
-                <a key={ad.id} href={ad.link_url || '#'} target={ad.link_url ? '_blank' : '_self'} rel="noopener noreferrer" className="ad-banner-item">
-                  {ad.media_type === 'video' ? (
-                    <video src={ad.media_url} autoPlay muted loop playsInline />
-                  ) : (
-                    <img src={ad.media_url} alt={ad.title} />
-                  )}
-                </a>
-              ))}
-            </div>
+            <AdCarousel ads={bannerAds} className="ad-carousel-banner" />
           </div>
         </section>
       )}
@@ -137,15 +128,7 @@ export default function Home() {
 
             {sidebarAds.length > 0 && (
               <aside className="home-sidebar-ads">
-                {sidebarAds.map(ad => (
-                  <a key={ad.id} href={ad.link_url || '#'} target={ad.link_url ? '_blank' : '_self'} rel="noopener noreferrer" className="sidebar-ad-item">
-                    {ad.media_type === 'video' ? (
-                      <video src={ad.media_url} autoPlay muted loop playsInline />
-                    ) : (
-                      <img src={ad.media_url} alt={ad.title} />
-                    )}
-                  </a>
-                ))}
+                <AdCarousel ads={sidebarAds} className="ad-carousel-sidebar" />
               </aside>
             )}
           </div>
@@ -162,17 +145,7 @@ export default function Home() {
       {inlineAds.length > 0 && (
         <section className="inline-ads-section">
           <div className="container">
-            <div className="inline-ads-grid">
-              {inlineAds.map(ad => (
-                <a key={ad.id} href={ad.link_url || '#'} target={ad.link_url ? '_blank' : '_self'} rel="noopener noreferrer" className="inline-ad-item">
-                  {ad.media_type === 'video' ? (
-                    <video src={ad.media_url} autoPlay muted loop playsInline />
-                  ) : (
-                    <img src={ad.media_url} alt={ad.title} />
-                  )}
-                </a>
-              ))}
-            </div>
+            <AdCarousel ads={inlineAds} className="ad-carousel-inline" />
           </div>
         </section>
       )}
