@@ -198,7 +198,7 @@ export default function JobDetail() {
                 {recruiter?.company_description && (
                   <p className="company-description">{recruiter.company_description}</p>
                 )}
-                <p className="recruiter-name">Publié par {recruiter?.first_name} {recruiter?.last_name}</p>
+                <p className="recruiter-name">Publié par {recruiter?.company || job.company}</p>
               </div>
             </div>
           </div>
