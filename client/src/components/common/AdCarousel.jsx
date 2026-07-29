@@ -27,9 +27,17 @@ export default function AdCarousel({ ads, className = '' }) {
             className="ad-carousel-slide"
           >
             {ad.media_type === 'video' ? (
-              <video src={ad.media_url} autoPlay muted loop playsInline />
+              <video src={ad.media_url} className="ad-desktop-media" autoPlay muted loop playsInline />
             ) : (
-              <img src={ad.media_url} alt={ad.title} />
+              <>
+                <img src={ad.media_url} alt={ad.title} className="ad-desktop-media" />
+                {ad.mobile_media_url && (
+                  <img src={ad.mobile_media_url} alt={ad.title} className="ad-mobile-media" />
+                )}
+              </>
+            )}
+            {ad.media_type !== 'video' && !ad.mobile_media_url && (
+              <img src={ad.media_url} alt={ad.title} className="ad-mobile-media" />
             )}
           </a>
         ))}

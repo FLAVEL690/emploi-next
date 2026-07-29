@@ -455,8 +455,7 @@
   background: var(--gray-100);
 }
 
-.ad-carousel-banner .ad-carousel-slide img,
-.ad-carousel-banner .ad-carousel-slide video {
+.ad-carousel-banner .ad-carousel-slide .ad-desktop-media {
   height: 400px;
 }
 
@@ -465,8 +464,7 @@
   top: 84px;
 }
 
-.ad-carousel-sidebar .ad-carousel-slide img,
-.ad-carousel-sidebar .ad-carousel-slide video {
+.ad-carousel-sidebar .ad-carousel-slide .ad-desktop-media {
   height: 300px;
 }
 
@@ -475,8 +473,7 @@
   background: var(--gray-100);
 }
 
-.ad-carousel-inline .ad-carousel-slide img,
-.ad-carousel-inline .ad-carousel-slide video {
+.ad-carousel-inline .ad-carousel-slide .ad-desktop-media {
   height: 350px;
 }
 
@@ -506,10 +503,7 @@
   .section-title { font-size: 26px; }
   .cta-content h2 { font-size: 28px; }
   .cta-buttons { flex-direction: column; }
-  .ad-carousel-banner .ad-carousel-slide img,
-  .ad-carousel-banner .ad-carousel-slide video { height: 220px; }
-  .ad-carousel-inline .ad-carousel-slide img,
-  .ad-carousel-inline .ad-carousel-slide video { height: 200px; }
-  .ad-carousel-sidebar .ad-carousel-slide img,
-  .ad-carousel-sidebar .ad-carousel-slide video { height: 180px; }
+  .ad-carousel-banner .ad-carousel-slide .ad-mobile-media { height: 250px; }
+  .ad-carousel-inline .ad-carousel-slide .ad-mobile-media { height: 220px; }
+  .ad-carousel-sidebar .ad-carousel-slide .ad-mobile-media { height: 200px; }
 }

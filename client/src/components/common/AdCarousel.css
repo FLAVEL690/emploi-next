@@ -15,13 +15,16 @@
   display: block;
 }
 
-.ad-carousel-slide img,
-.ad-carousel-slide video {
+.ad-carousel-slide .ad-desktop-media {
   width: 100%;
   height: 400px;
   object-fit: contain;
   display: block;
   background: var(--gray-100);
+}
+
+.ad-carousel-slide .ad-mobile-media {
+  display: none;
 }
 
 .ad-carousel-dots {
@@ -48,9 +51,15 @@
 }
 
 @media (max-width: 768px) {
-  .ad-carousel-slide img,
-  .ad-carousel-slide video {
-    height: 220px;
+  .ad-carousel-slide .ad-desktop-media {
+    display: none;
+  }
+
+  .ad-carousel-slide .ad-mobile-media {
+    display: block;
+    width: 100%;
+    height: 280px;
     object-fit: contain;
+    background: var(--gray-100);
   }
 }

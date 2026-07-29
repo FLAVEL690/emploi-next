@@ -435,10 +435,10 @@ export async function uploadAdMedia(file) {
   return urlData.publicUrl;
 }
 
-export async function createAd({ title, mediaUrl, mediaType, linkUrl, position }) {
+export async function createAd({ title, mediaUrl, mediaType, mobileMediaUrl, linkUrl, position }) {
   const { data, error } = await supabase
     .from('advertisements')
-    .insert({ title, media_url: mediaUrl, media_type: mediaType, link_url: linkUrl || null, position: position || 'banner' })
+    .insert({ title, media_url: mediaUrl, media_type: mediaType, mobile_media_url: mobileMediaUrl || null, link_url: linkUrl || null, position: position || 'banner' })
     .select()
     .single();
   if (error) throw error;

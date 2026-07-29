@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { FiTrash2, FiPlus, FiUpload, FiImage, FiVideo, FiX } from 'react-icons/fi';
+import { FiTrash2, FiPlus, FiUpload, FiImage, FiVideo, FiX, FiSmartphone, FiMonitor } from 'react-icons/fi';
 import { getAdminAds, uploadAdMedia, createAd, updateAd, deleteAd } from '../../services/api';
 import '../recruiter/Recruiter.css';
 import './AdminAds.css';
@@ -12,7 +12,10 @@ export default function AdminAds() {
   const [form, setForm] = useState({ title: '', linkUrl: '', position: 'banner' });
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [selectedMobileFile, setSelectedMobileFile] = useState(null);
+  const [mobilePreview, setMobilePreview] = useState(null);
   const fileInputRef = useRef(null);
+  const mobileFileInputRef = useRef(null);
 
   useEffect(() => { fetchAds(); }, []);
 
@@ -32,6 +35,18 @@ export default function AdminAds() {
     }
   };
 
+  const handleMobileFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSelectedMobileFile(file);
+
+    if (file.type.startsWith('video/')) {
+      setMobilePreview({ type: 'video', url: URL.createObjectURL(file) });
+    } else {
+      setMobilePreview({ type: 'image', url: URL.createObjectURL(file) });
+    }
+  };
+
   const removeFile = () => {
     setSelectedFile(null);
     if (preview) URL.revokeObjectURL(preview.url);
@@ -39,10 +54,17 @@ export default function AdminAds() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const removeMobileFile = () => {
+    setSelectedMobileFile(null);
+    if (mobilePreview) URL.revokeObjectURL(mobilePreview.url);
+    setMobilePreview(null);
+    if (mobileFileInputRef.current) mobileFileInputRef.current.value = '';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedFile) {
-      alert('Veuillez sélectionner un fichier image ou vidéo');
+      alert('Veuillez sélectionner un fichier image ou vidéo (Desktop/Tablette)');
       return;
     }
     if (!form.title.trim()) {
@@ -55,16 +77,23 @@ export default function AdminAds() {
       const mediaUrl = await uploadAdMedia(selectedFile);
       const mediaType = selectedFile.type.startsWith('video/') ? 'video' : 'image';
 
+      let mobileMediaUrl = null;
+      if (selectedMobileFile) {
+        mobileMediaUrl = await uploadAdMedia(selectedMobileFile);
+      }
+
       await createAd({
         title: form.title,
         mediaUrl,
         mediaType,
+        mobileMediaUrl,
         linkUrl: form.linkUrl,
         position: form.position
       });
 
       setForm({ title: '', linkUrl: '', position: 'banner' });
       removeFile();
+      removeMobileFile();
       setShowForm(false);
       fetchAds();
     } catch (error) {
@@ -123,12 +152,12 @@ export default function AdminAds() {
           </div>
 
           <div className="form-group">
-            <label>Image ou Vidéo *</label>
+            <label><FiMonitor size={14} /> Image Desktop / Tablette * <span className="upload-size-hint">(1200 x 400px recommandé)</span></label>
             <div className="upload-zone" onClick={() => fileInputRef.current?.click()}>
               {!preview ? (
                 <div className="upload-placeholder">
                   <FiUpload size={32} />
-                  <p>Cliquez pour importer une image ou vidéo</p>
+                  <p>Cliquez pour importer l'image Desktop</p>
                   <span>JPG, PNG, GIF, WebP, SVG, MP4, WebM, OGG (max 50MB)</span>
                 </div>
               ) : (
@@ -149,6 +178,37 @@ export default function AdminAds() {
               type="file"
               accept="image/*,video/*"
               onChange={handleFileSelect}
+              style={{ display: 'none' }}
+            />
+          </div>
+
+          <div className="form-group">
+            <label><FiSmartphone size={14} /> Image Mobile <span className="upload-size-hint">(600 x 400px recommandé)</span></label>
+            <div className="upload-zone" onClick={() => mobileFileInputRef.current?.click()}>
+              {!mobilePreview ? (
+                <div className="upload-placeholder">
+                  <FiUpload size={32} />
+                  <p>Cliquez pour importer l'image Mobile</p>
+                  <span>Version adaptée au téléphone (optionnel)</span>
+                </div>
+              ) : (
+                <div className="upload-preview">
+                  {mobilePreview.type === 'image' ? (
+                    <img src={mobilePreview.url} alt="Preview mobile" />
+                  ) : (
+                    <video src={mobilePreview.url} controls />
+                  )}
+                  <button type="button" className="remove-file-btn" onClick={(e) => { e.stopPropagation(); removeMobileFile(); }}>
+                    <FiX />
+                  </button>
+                </div>
+              )}
+            </div>
+            <input
+              ref={mobileFileInputRef}
+              type="file"
+              accept="image/*,video/*"
+              onChange={handleMobileFileSelect}
               style={{ display: 'none' }}
             />
           </div>
