@@ -150,6 +150,7 @@ export async function createJob(jobData, userId, company) {
       benefits: jobData.benefits || null,
       experience_level: jobData.experienceLevel || 'any',
       expires_at: jobData.expiresAt,
+      skills: jobData.skills || [],
       require_cv: jobData.requireCv ?? true,
       require_cover_letter: jobData.requireCoverLetter ?? false,
       other_documents: jobData.otherDocuments || null,

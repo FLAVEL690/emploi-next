@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FiTrash2, FiEye, FiRefreshCw, FiUsers } from 'react-icons/fi';
+import { FiTrash2, FiEye, FiRefreshCw, FiUsers, FiTarget } from 'react-icons/fi';
 import { getMyJobs, updateJob, deleteJob } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import './Recruiter.css';
@@ -74,6 +74,7 @@ export default function MyJobs() {
                     <td>
                       <div className="table-actions">
                         <Link to={`/recruiter/jobs/${job.id}`} className="action-btn" title="Voir candidatures"><FiEye /></Link>
+                        <Link to={`/recruiter/jobs/${job.id}/matching`} className="action-btn green" title="Candidats potentiels"><FiTarget /></Link>
                         {isExpired && <button className="action-btn green" title="Réactiver" onClick={() => handleReactivate(job)}><FiRefreshCw /></button>}
                         <button className="action-btn red" title="Supprimer" onClick={() => handleDelete(job.id)}><FiTrash2 /></button>
                       </div>

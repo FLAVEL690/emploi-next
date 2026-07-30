@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiGrid, FiBriefcase, FiUsers, FiImage, FiFileText, FiHeart, FiBell, FiUser, FiLogOut, FiPlusCircle, FiBarChart2 } from 'react-icons/fi';
+import { FiGrid, FiBriefcase, FiUsers, FiImage, FiFileText, FiHeart, FiBell, FiUser, FiLogOut, FiPlusCircle, FiBarChart2, FiTarget } from 'react-icons/fi';
 import './DashboardLayout.css';
 
 export default function DashboardLayout() {
@@ -34,6 +34,7 @@ export default function DashboardLayout() {
     }
     return [
       { to: '/candidate', icon: <FiGrid />, label: 'Dashboard', end: true },
+      { to: '/candidate/recommended', icon: <FiTarget />, label: 'Recommandées' },
       { to: '/candidate/applications', icon: <FiFileText />, label: 'Candidatures' },
       { to: '/candidate/saved', icon: <FiHeart />, label: 'Favoris' },
       { to: '/notifications', icon: <FiBell />, label: 'Notifications' },

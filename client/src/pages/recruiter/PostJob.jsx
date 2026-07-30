@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCategories, createJob } from '../../services/api';
+import { generateJobDescription } from '../../services/matching';
 import { useAuth } from '../../context/AuthContext';
-import { FiSave, FiTrash2 } from 'react-icons/fi';
+import { FiSave, FiTrash2, FiZap, FiX } from 'react-icons/fi';
 import './Recruiter.css';
 
 const DRAFT_KEY = 'postjob_draft';
 const INITIAL_FORM = {
   title: '', description: '', category: '', type: 'full-time', mode: 'on-site',
   salary: '', country: '', city: '', district: '', requirements: '',
-  benefits: '', experienceLevel: 'any', expiresAt: '',
+  benefits: '', experienceLevel: 'any', expiresAt: '', skills: [],
   requireCv: true, requireCoverLetter: false, otherDocuments: '',
   applicationMethod: 'platform', whatsappNumber: '', contactEmail: ''
 };
@@ -29,8 +30,12 @@ export default function PostJob() {
   const [loading, setLoading] = useState(false);
   const [draftStatus, setDraftStatus] = useState(null);
   const draft = loadDraft();
-  const [form, setForm] = useState(draft || INITIAL_FORM);
+  const [form, setForm] = useState(() => {
+    if (draft) return { ...INITIAL_FORM, ...draft, skills: draft.skills || [] };
+    return INITIAL_FORM;
+  });
   const [hasDraft, setHasDraft] = useState(!!draft);
+  const [skillInput, setSkillInput] = useState('');
   const saveTimeout = useRef(null);
 
   useEffect(() => { getCategories().then(setCategoriesList).catch(() => {}); }, []);
@@ -107,8 +112,65 @@ export default function PostJob() {
           <input className="form-control" placeholder="Ex: Développeur Frontend React" value={form.title} onChange={(e) => update('title', e.target.value)} required />
         </div>
         <div className="form-group">
-          <label>Description *</label>
-          <textarea className="form-control" rows={5} placeholder="Décrivez le poste en détail..." value={form.description} onChange={(e) => update('description', e.target.value)} required />
+          <label>Compétences requises</label>
+          <div className="skills-input-wrapper">
+            <input
+              className="form-control"
+              placeholder="Tapez une compétence et appuyez sur Entrée"
+              value={skillInput}
+              onChange={(e) => setSkillInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  const val = skillInput.trim();
+                  if (val && !form.skills.includes(val)) {
+                    update('skills', [...form.skills, val]);
+                  }
+                  setSkillInput('');
+                }
+              }}
+            />
+            {form.skills.length > 0 && (
+              <div className="skills-tags">
+                {form.skills.map((skill, i) => (
+                  <span key={i} className="skill-tag">
+                    {skill}
+                    <button type="button" onClick={() => update('skills', form.skills.filter((_, idx) => idx !== i))}>
+                      <FiX size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="form-group">
+          <div className="description-header">
+            <label>Description *</label>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm generate-btn"
+              onClick={() => {
+                const generated = generateJobDescription({
+                  title: form.title,
+                  category: form.category,
+                  type: form.type,
+                  mode: form.mode,
+                  experienceLevel: form.experienceLevel,
+                  skills: form.skills,
+                  city: form.city,
+                  country: form.country,
+                  salary: form.salary
+                });
+                update('description', generated);
+              }}
+              disabled={!form.title}
+            >
+              <FiZap size={14} /> Générer la description
+            </button>
+          </div>
+          <textarea className="form-control" rows={8} placeholder="Décrivez le poste en détail..." value={form.description} onChange={(e) => update('description', e.target.value)} required />
         </div>
         <div className="form-row">
           <div className="form-group">

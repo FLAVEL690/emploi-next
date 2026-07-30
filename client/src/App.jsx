@@ -15,9 +15,11 @@ import RecruiterDashboard from './pages/recruiter/RecruiterDashboard';
 import PostJob from './pages/recruiter/PostJob';
 import MyJobs from './pages/recruiter/MyJobs';
 import JobApplications from './pages/recruiter/JobApplications';
+import MatchingCandidates from './pages/recruiter/MatchingCandidates';
 import CandidateDashboard from './pages/candidate/CandidateDashboard';
 import MyApplications from './pages/candidate/MyApplications';
 import SavedJobs from './pages/candidate/SavedJobs';
+import RecommendedJobs from './pages/candidate/RecommendedJobs';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminJobs from './pages/admin/AdminJobs';
@@ -91,6 +93,7 @@ function App() {
             <Route index element={<RecruiterDashboard />} />
             <Route path="jobs" element={<MyJobs />} />
             <Route path="jobs/:jobId" element={<JobApplications />} />
+            <Route path="jobs/:jobId/matching" element={<MatchingCandidates />} />
             <Route path="post-job" element={<PostJob />} />
           </Route>
 
@@ -103,6 +106,7 @@ function App() {
             <Route index element={<CandidateDashboard />} />
             <Route path="applications" element={<MyApplications />} />
             <Route path="saved" element={<SavedJobs />} />
+            <Route path="recommended" element={<RecommendedJobs />} />
           </Route>
 
           <Route path="/admin" element={

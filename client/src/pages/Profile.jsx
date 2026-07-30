@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { updateProfile, changePassword, uploadAvatar } from '../services/api';
-import { FiCamera, FiUser } from 'react-icons/fi';
+import { updateProfile, changePassword, uploadAvatar, getCategories } from '../services/api';
+import { FiCamera, FiUser, FiX } from 'react-icons/fi';
 import './Auth.css';
 
 export default function Profile() {
@@ -14,14 +14,26 @@ export default function Profile() {
     city: user?.city || '',
     country: user?.country || '',
     company: user?.company || '',
-    company_description: user?.company_description || ''
+    company_description: user?.company_description || '',
+    skills: user?.skills || [],
+    preferred_categories: user?.preferred_categories || [],
+    preferred_types: user?.preferred_types || [],
+    experience_level: user?.experience_level || ''
   });
   const [passwords, setPasswords] = useState({ newPassword: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [tab, setTab] = useState('profile');
+  const [skillInput, setSkillInput] = useState('');
+  const [categories, setCategoriesList] = useState([]);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (user?.role === 'candidate') {
+      getCategories().then(setCategoriesList).catch(() => {});
+    }
+  }, [user?.role]);
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files?.[0];
@@ -168,6 +180,111 @@ export default function Profile() {
             <label>Bio</label>
             <textarea className="form-control" rows={4} placeholder="Parlez un peu de vous..." value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} />
           </div>
+
+          {user?.role === 'candidate' && (
+            <>
+              <div className="form-section">
+                <h3>Matching & Recommandations</h3>
+                <p style={{ color: 'var(--gray-500)', fontSize: '14px', marginBottom: '16px' }}>
+                  Ces informations permettent de vous recommander les offres les plus pertinentes.
+                </p>
+
+                <div className="form-group">
+                  <label>Compétences</label>
+                  <div className="skills-input-wrapper">
+                    <input
+                      className="form-control"
+                      placeholder="Tapez une compétence et appuyez sur Entrée"
+                      value={skillInput}
+                      onChange={(e) => setSkillInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          const val = skillInput.trim();
+                          if (val && !form.skills.includes(val)) {
+                            setForm({ ...form, skills: [...form.skills, val] });
+                          }
+                          setSkillInput('');
+                        }
+                      }}
+                    />
+                    {form.skills.length > 0 && (
+                      <div className="skills-tags">
+                        {form.skills.map((skill, i) => (
+                          <span key={i} className="skill-tag">
+                            {skill}
+                            <button type="button" onClick={() => setForm({ ...form, skills: form.skills.filter((_, idx) => idx !== i) })}>
+                              <FiX size={12} />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Niveau d'expérience</label>
+                  <select className="form-control" value={form.experience_level} onChange={(e) => setForm({ ...form, experience_level: e.target.value })}>
+                    <option value="">Non spécifié</option>
+                    <option value="junior">Junior (0-2 ans)</option>
+                    <option value="mid">Intermédiaire (2-5 ans)</option>
+                    <option value="senior">Senior (5+ ans)</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Catégories préférées</label>
+                  <div className="checkbox-grid">
+                    {categories.map(cat => (
+                      <label key={cat.id} className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={form.preferred_categories.includes(cat.name)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setForm({ ...form, preferred_categories: [...form.preferred_categories, cat.name] });
+                            } else {
+                              setForm({ ...form, preferred_categories: form.preferred_categories.filter(c => c !== cat.name) });
+                            }
+                          }}
+                        />
+                        {cat.name}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Types de poste recherchés</label>
+                  <div className="checkbox-grid">
+                    {[
+                      { value: 'full-time', label: 'Temps plein' },
+                      { value: 'part-time', label: 'Temps partiel' },
+                      { value: 'contract', label: 'Contrat' },
+                      { value: 'internship', label: 'Stage' },
+                      { value: 'freelance', label: 'Freelance' }
+                    ].map(t => (
+                      <label key={t.value} className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={form.preferred_types.includes(t.value)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setForm({ ...form, preferred_types: [...form.preferred_types, t.value] });
+                            } else {
+                              setForm({ ...form, preferred_types: form.preferred_types.filter(v => v !== t.value) });
+                            }
+                          }}
+                        />
+                        {t.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
 
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? 'Enregistrement...' : 'Enregistrer'}
