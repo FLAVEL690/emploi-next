@@ -158,85 +158,8 @@
   text-align: left;
 }
 
-.how-it-works {
-  padding: 100px 20px;
-  background: var(--white);
-  position: relative;
-}
-
-.steps-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-}
-
-.step-card {
-  text-align: center;
-  padding: 36px 24px;
-  border-radius: var(--radius-xl);
-  position: relative;
-  transition: var(--transition);
-  border: 1px solid transparent;
-}
-
-.step-card:hover {
-  background: var(--gray-50);
-  border-color: var(--gray-200);
-  transform: translateY(-4px);
-}
-
-.step-number {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  width: 30px;
-  height: 30px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  color: var(--white);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
-  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
-}
-
-.step-icon {
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
-  color: var(--primary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 18px;
-  font-size: 26px;
-  transition: var(--transition);
-}
-
-.step-card:hover .step-icon {
-  transform: scale(1.1);
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  color: var(--white);
-}
-
-.step-card h3 {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: var(--gray-800);
-}
-
-.step-card p {
-  font-size: 14px;
-  color: var(--gray-500);
-  line-height: 1.6;
-}
-
 .recent-jobs {
-  padding: 100px 20px;
+  padding: 60px 20px 80px;
 }
 
 .recent-jobs-layout {
@@ -312,7 +235,7 @@
 }
 
 .features {
-  padding: 100px 20px;
+  padding: 60px 20px;
   background: linear-gradient(180deg, var(--gray-50) 0%, var(--white) 100%);
 }
 
@@ -320,7 +243,6 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
-  margin-top: 48px;
 }
 
 .feature-card {
@@ -478,7 +400,6 @@
 }
 
 @media (max-width: 1024px) {
-  .steps-grid { grid-template-columns: repeat(2, 1fr); }
   .categories-grid { grid-template-columns: repeat(2, 1fr); }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
   .recent-jobs-layout { grid-template-columns: 1fr; }
@@ -495,7 +416,6 @@
   .hero-search .btn { width: 100%; border-radius: var(--radius); }
   .hero-stats { gap: 24px; }
   .stat-number { font-size: 24px; }
-  .steps-grid { grid-template-columns: 1fr; }
   .jobs-grid { grid-template-columns: 1fr; }
   .categories-grid { grid-template-columns: 1fr; }
   .features-grid { grid-template-columns: 1fr; }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiSearch, FiUsers, FiBriefcase, FiCheckCircle, FiArrowRight, FiStar, FiTrendingUp, FiShield, FiZap } from 'react-icons/fi';
+import { FiSearch, FiBriefcase, FiArrowRight, FiTrendingUp, FiShield, FiZap } from 'react-icons/fi';
 import { getJobs, getJobStats, getCategories, getPublicAds } from '../services/api';
 import JobCard from '../components/jobs/JobCard';
 import AdCarousel from '../components/common/AdCarousel';
@@ -79,40 +79,6 @@ export default function Home() {
         </section>
       )}
 
-      <section className="how-it-works">
-        <div className="container">
-          <h2 className="section-title">Comment ça marche ?</h2>
-          <p className="section-subtitle">Un processus simple et efficace pour trouver votre prochain emploi</p>
-
-          <div className="steps-grid">
-            <div className="step-card">
-              <div className="step-number">1</div>
-              <div className="step-icon"><FiUsers /></div>
-              <h3>Créez votre compte</h3>
-              <p>Inscrivez-vous gratuitement et complétez votre profil professionnel</p>
-            </div>
-            <div className="step-card">
-              <div className="step-number">2</div>
-              <div className="step-icon"><FiSearch /></div>
-              <h3>Explorez les offres</h3>
-              <p>Recherchez parmi des centaines d'offres et filtrez selon vos critères</p>
-            </div>
-            <div className="step-card">
-              <div className="step-number">3</div>
-              <div className="step-icon"><FiBriefcase /></div>
-              <h3>Postulez facilement</h3>
-              <p>Envoyez votre candidature en un clic avec votre lettre de motivation</p>
-            </div>
-            <div className="step-card">
-              <div className="step-number">4</div>
-              <div className="step-icon"><FiCheckCircle /></div>
-              <h3>Décrochez le job</h3>
-              <p>Suivez vos candidatures et recevez des notifications en temps réel</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="recent-jobs">
         <div className="container">
           <div className="section-header">
@@ -148,14 +114,6 @@ export default function Home() {
         </div>
       </section>
 
-      {inlineAds.length > 0 && (
-        <section className="inline-ads-section">
-          <div className="container">
-            <AdCarousel ads={inlineAds} className="ad-carousel-inline" />
-          </div>
-        </section>
-      )}
-
       <section className="categories-section">
         <div className="container">
           <h2 className="section-title">Parcourir par catégorie</h2>
@@ -172,25 +130,31 @@ export default function Home() {
         </div>
       </section>
 
+      {inlineAds.length > 0 && (
+        <section className="inline-ads-section">
+          <div className="container">
+            <AdCarousel ads={inlineAds} className="ad-carousel-inline" />
+          </div>
+        </section>
+      )}
+
       <section className="features">
         <div className="container">
-          <h2 className="section-title">Pourquoi NexJob ?</h2>
-          <p className="section-subtitle">La plateforme de confiance pour votre carrière</p>
           <div className="features-grid">
             <div className="feature-card">
               <FiZap className="feature-icon" />
               <h3>Rapide & Efficace</h3>
-              <p>Postulez en un clic. Recevez des réponses rapidement grâce à notre système intelligent.</p>
+              <p>Postulez en un clic et recevez des réponses rapidement.</p>
             </div>
             <div className="feature-card">
               <FiShield className="feature-icon" />
               <h3>100% Fiable</h3>
-              <p>Chaque offre est vérifiée. Chaque entreprise est authentifiée pour votre sécurité.</p>
+              <p>Chaque offre et entreprise est vérifiée.</p>
             </div>
             <div className="feature-card">
               <FiTrendingUp className="feature-icon" />
               <h3>Opportunités Premium</h3>
-              <p>Accédez aux meilleures offres du marché, sélectionnées par nos experts.</p>
+              <p>Les meilleures offres du marché, sélectionnées pour vous.</p>
             </div>
           </div>
         </div>
@@ -200,7 +164,6 @@ export default function Home() {
         <div className="container">
           <div className="cta-content">
             <h2>Prêt à transformer votre carrière ?</h2>
-            <p>Rejoignez des milliers de professionnels qui ont trouvé leur emploi idéal sur NexJob</p>
             <div className="cta-buttons">
               <Link to="/register" className="btn btn-primary btn-lg">Commencer gratuitement</Link>
               <Link to="/jobs" className="btn btn-secondary btn-lg">Explorer les offres</Link>
