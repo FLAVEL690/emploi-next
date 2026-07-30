@@ -2,40 +2,39 @@ import { supabase } from './supabase';
 
 export function computeMatchScore(candidate, job) {
   let score = 0;
-  let maxScore = 0;
+  const maxScore = 100;
 
   // Skills match (40 points max)
   const candidateSkills = (candidate.skills || []).map(s => s.toLowerCase().trim());
   const jobSkills = (job.skills || []).map(s => s.toLowerCase().trim());
   if (jobSkills.length > 0 && candidateSkills.length > 0) {
-    maxScore += 40;
     const matched = candidateSkills.filter(s => jobSkills.includes(s)).length;
     score += Math.round((matched / jobSkills.length) * 40);
+  } else if (jobSkills.length === 0 && candidateSkills.length > 0) {
+    // Pas de skills sur l'offre — bonus partiel si le candidat a des compétences
+    score += 15;
   }
 
   // Category match (25 points)
   const preferredCategories = (candidate.preferred_categories || []).map(c => c.toLowerCase());
-  if (preferredCategories.length > 0) {
-    maxScore += 25;
-    if (preferredCategories.includes((job.category || '').toLowerCase())) {
+  if (preferredCategories.length > 0 && job.category) {
+    if (preferredCategories.includes(job.category.toLowerCase())) {
       score += 25;
     }
   }
 
   // Location match (15 points)
   if (candidate.city && job.city) {
-    maxScore += 15;
     if (candidate.city.toLowerCase().trim() === job.city.toLowerCase().trim()) {
       score += 15;
     } else if (candidate.country && job.country &&
       candidate.country.toLowerCase().trim() === job.country.toLowerCase().trim()) {
-      score += 7;
+      score += 8;
     }
   }
 
   // Experience level match (10 points)
   if (candidate.experience_level && job.experience_level && job.experience_level !== 'any') {
-    maxScore += 10;
     if (candidate.experience_level === job.experience_level) {
       score += 10;
     } else {
@@ -43,19 +42,19 @@ export function computeMatchScore(candidate, job) {
       const diff = Math.abs(levels.indexOf(candidate.experience_level) - levels.indexOf(job.experience_level));
       if (diff === 1) score += 5;
     }
+  } else if (job.experience_level === 'any') {
+    score += 5;
   }
 
   // Job type match (10 points)
   const preferredTypes = (candidate.preferred_types || []).map(t => t.toLowerCase());
-  if (preferredTypes.length > 0) {
-    maxScore += 10;
-    if (preferredTypes.includes((job.type || '').toLowerCase())) {
+  if (preferredTypes.length > 0 && job.type) {
+    if (preferredTypes.includes(job.type.toLowerCase())) {
       score += 10;
     }
   }
 
-  if (maxScore === 0) return 0;
-  return Math.round((score / maxScore) * 100);
+  return Math.min(score, maxScore);
 }
 
 export async function getMatchingJobsForCandidate(candidateId) {
@@ -103,13 +102,15 @@ export async function getMatchingCandidatesForJob(job) {
 
   if (!candidates || candidates.length === 0) return [];
 
-  return candidates
-    .map(candidate => ({
-      ...candidate,
-      matchScore: computeMatchScore(candidate, job)
-    }))
-    .filter(c => c.matchScore > 0)
-    .sort((a, b) => b.matchScore - a.matchScore);
+  const scored = candidates.map(candidate => ({
+    ...candidate,
+    matchScore: computeMatchScore(candidate, job)
+  }));
+
+  // Afficher tous les candidats triés par score, ceux avec score > 0 d'abord
+  return scored
+    .sort((a, b) => b.matchScore - a.matchScore)
+    .slice(0, 30);
 }
 
 export function generateJobDescription({ title, category, type, mode, experienceLevel, skills, city, country, salary }) {

@@ -15,6 +15,7 @@ import RecruiterDashboard from './pages/recruiter/RecruiterDashboard';
 import PostJob from './pages/recruiter/PostJob';
 import MyJobs from './pages/recruiter/MyJobs';
 import JobApplications from './pages/recruiter/JobApplications';
+import Matching from './pages/recruiter/Matching';
 import MatchingCandidates from './pages/recruiter/MatchingCandidates';
 import CandidateDashboard from './pages/candidate/CandidateDashboard';
 import MyApplications from './pages/candidate/MyApplications';
@@ -94,6 +95,7 @@ function App() {
             <Route path="jobs" element={<MyJobs />} />
             <Route path="jobs/:jobId" element={<JobApplications />} />
             <Route path="jobs/:jobId/matching" element={<MatchingCandidates />} />
+            <Route path="matching" element={<Matching />} />
             <Route path="post-job" element={<PostJob />} />
           </Route>
 

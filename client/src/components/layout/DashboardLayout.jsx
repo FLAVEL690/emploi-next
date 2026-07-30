@@ -28,6 +28,7 @@ export default function DashboardLayout() {
       return [
         { to: '/recruiter', icon: <FiGrid />, label: 'Dashboard', end: true },
         { to: '/recruiter/jobs', icon: <FiBriefcase />, label: 'Mes Offres' },
+        { to: '/recruiter/matching', icon: <FiTarget />, label: 'Matching' },
         { to: '/recruiter/post-job', icon: <FiPlusCircle />, label: 'Nouvelle Offre' },
         { to: '/notifications', icon: <FiBell />, label: 'Notifications' },
       ];
