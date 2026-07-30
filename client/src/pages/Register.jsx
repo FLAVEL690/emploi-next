@@ -30,7 +30,12 @@ export default function Register() {
 
     setLoading(true);
     try {
-      const profile = await register(form);
+      const registerData = { ...form };
+      if (form.role === 'recruiter') {
+        registerData.firstName = form.company;
+        registerData.lastName = '';
+      }
+      const profile = await register(registerData);
       if (profile) {
         if (profile.role === 'recruiter') navigate('/recruiter');
         else navigate('/candidate');
@@ -62,28 +67,22 @@ export default function Register() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Prénom</label>
-              <input className="form-control" placeholder="Votre prénom" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} required />
+          {form.role === 'candidate' && (
+            <div className="form-row">
+              <div className="form-group">
+                <label>Prénom</label>
+                <input className="form-control" placeholder="Votre prénom" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} required />
+              </div>
+              <div className="form-group">
+                <label>Nom</label>
+                <input className="form-control" placeholder="Votre nom" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} required />
+              </div>
             </div>
-            <div className="form-group">
-              <label>Nom</label>
-              <input className="form-control" placeholder="Votre nom" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} required />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label>Email</label>
-            <div className="input-icon">
-              <FiMail />
-              <input type="email" className="form-control" placeholder="votre@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-            </div>
-          </div>
+          )}
 
           {form.role === 'recruiter' && (
             <div className="form-group">
-              <label>Entreprise</label>
+              <label>Nom de l'entreprise *</label>
               <div className="input-icon">
                 <FiBriefcase />
                 <input className="form-control" placeholder="Nom de votre entreprise" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} required />
@@ -92,10 +91,18 @@ export default function Register() {
           )}
 
           <div className="form-group">
-            <label>Téléphone (optionnel)</label>
+            <label>Email *</label>
+            <div className="input-icon">
+              <FiMail />
+              <input type="email" className="form-control" placeholder={form.role === 'recruiter' ? 'contact@entreprise.com' : 'votre@email.com'} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label>Téléphone {form.role === 'recruiter' ? '*' : '(optionnel)'}</label>
             <div className="input-icon">
               <FiPhone />
-              <input className="form-control" placeholder="+237 6XX XXX XXX" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+              <input className="form-control" placeholder="+237 6XX XXX XXX" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required={form.role === 'recruiter'} />
             </div>
           </div>
 

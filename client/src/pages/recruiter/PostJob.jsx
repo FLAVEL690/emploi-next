@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { getCategories, createJob } from '../../services/api';
 import { generateJobDescription } from '../../services/matching';
 import { useAuth } from '../../context/AuthContext';
-import { FiSave, FiTrash2, FiZap, FiX } from 'react-icons/fi';
+import { FiSave, FiTrash2, FiZap, FiX, FiAlertCircle } from 'react-icons/fi';
 import './Recruiter.css';
 
 const DRAFT_KEY = 'postjob_draft';
@@ -65,6 +65,10 @@ export default function PostJob() {
     setDraftStatus(null);
   };
 
+  const isRecruiterProfileComplete = () => {
+    return user?.company && user?.company_description && user?.company_email && user?.company_phone;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -79,6 +83,22 @@ export default function PostJob() {
       setLoading(false);
     }
   };
+
+  if (!isRecruiterProfileComplete()) {
+    return (
+      <div>
+        <div className="page-header">
+          <h1>Publier une nouvelle offre</h1>
+        </div>
+        <div className="profile-incomplete-block">
+          <FiAlertCircle size={32} />
+          <h3>Complétez votre profil entreprise</h3>
+          <p>Avant de publier une offre, vous devez renseigner les informations obligatoires de votre entreprise : nom, description, email et téléphone.</p>
+          <Link to="/profile" className="btn btn-primary">Compléter le profil entreprise</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>

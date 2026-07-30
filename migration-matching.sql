@@ -1,5 +1,6 @@
 -- ============================================
 -- MIGRATION: Ajout des champs pour le matching
+-- et profil entreprise recruteur
 -- Exécuter dans l'éditeur SQL de Supabase
 -- ============================================
 
@@ -7,7 +8,15 @@
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS skills TEXT[] DEFAULT '{}';
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS preferred_categories TEXT[] DEFAULT '{}';
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS preferred_types TEXT[] DEFAULT '{}';
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS experience_level TEXT CHECK (experience_level IN ('junior', 'mid', 'senior', '')) DEFAULT '';
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS experience_level TEXT DEFAULT '';
+
+-- Ajouter les champs entreprise aux profils recruteurs
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS company_email TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS company_phone TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS website TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS linkedin TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS facebook TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS twitter TEXT;
 
 -- Ajouter les compétences aux offres d'emploi
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS skills TEXT[] DEFAULT '{}';

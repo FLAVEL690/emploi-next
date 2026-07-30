@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { FiMapPin, FiClock, FiBriefcase, FiMonitor, FiCalendar, FiEye, FiHeart, FiArrowLeft, FiDollarSign, FiStar, FiPhone, FiMail, FiFileText } from 'react-icons/fi';
+import { FiMapPin, FiClock, FiBriefcase, FiMonitor, FiCalendar, FiEye, FiHeart, FiArrowLeft, FiDollarSign, FiStar, FiPhone, FiMail, FiFileText, FiGlobe, FiLinkedin, FiFacebook, FiTwitter } from 'react-icons/fi';
 import { getJobById, applyToJob, toggleSaveJob, checkJobSaved, getMyApplications } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/common/SEO';
@@ -40,9 +40,21 @@ export default function JobDetail() {
     }
   };
 
+  const isProfileComplete = () => {
+    if (!user) return false;
+    return user.skills?.length > 0 && user.preferred_categories?.length > 0 && user.experience_level;
+  };
+
   const handleApply = async () => {
     if (!user) { navigate('/login'); return; }
     if (user.role !== 'candidate') return;
+
+    if (!isProfileComplete()) {
+      if (confirm('Vous devez compléter votre profil (compétences, catégories préférées, niveau d\'expérience) avant de postuler.\n\nVoulez-vous compléter votre profil maintenant ?')) {
+        navigate('/profile');
+      }
+      return;
+    }
 
     setApplying(true);
     try {
@@ -164,32 +176,44 @@ export default function JobDetail() {
                 </Link>
               ) : user.role === 'candidate' ? (
                 <>
-                  {hasApplied ? (
-                    <button className="btn btn-lg" style={{ width: '100%', background: 'var(--gray-200)', color: 'var(--gray-600)' }} disabled>
-                      Candidature envoyée
-                    </button>
-                  ) : job.application_method === 'whatsapp' && job.whatsapp_number ? (
-                    <a
-                      href={`https://wa.me/${job.whatsapp_number.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Bonjour, je souhaite postuler pour le poste "${job.title}" publié sur votre plateforme. Veuillez trouver ma candidature ci-jointe.`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-primary btn-lg"
-                      style={{ width: '100%', textAlign: 'center' }}
-                    >
-                      <FiPhone /> Postuler via WhatsApp
-                    </a>
-                  ) : job.application_method === 'email' && job.contact_email ? (
-                    <a
-                      href={`mailto:${job.contact_email}?subject=${encodeURIComponent(`Candidature - ${job.title}`)}&body=${encodeURIComponent(`Bonjour,\n\nJe souhaite postuler pour le poste "${job.title}" publié sur votre plateforme.\n\nVeuillez trouver ma candidature ci-jointe.\n\nCordialement`)}`}
-                      className="btn btn-primary btn-lg"
-                      style={{ width: '100%', textAlign: 'center' }}
-                    >
-                      <FiMail /> Postuler par Email
-                    </a>
-                  ) : (
-                    <button className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={() => setShowApplyModal(true)}>
-                      Postuler maintenant
-                    </button>
+                  {!isProfileComplete() && (
+                    <div className="profile-incomplete-warning">
+                      <p>Complétez votre profil pour postuler</p>
+                      <Link to="/profile" className="btn btn-primary btn-lg" style={{ width: '100%' }}>
+                        Compléter mon profil
+                      </Link>
+                    </div>
+                  )}
+                  {isProfileComplete() && (
+                    <>
+                      {hasApplied ? (
+                        <button className="btn btn-lg" style={{ width: '100%', background: 'var(--gray-200)', color: 'var(--gray-600)' }} disabled>
+                          Candidature envoyée
+                        </button>
+                      ) : job.application_method === 'whatsapp' && job.whatsapp_number ? (
+                        <a
+                          href={`https://wa.me/${job.whatsapp_number.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Bonjour, je souhaite postuler pour le poste "${job.title}" publié sur votre plateforme. Veuillez trouver ma candidature ci-jointe.`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-primary btn-lg"
+                          style={{ width: '100%', textAlign: 'center' }}
+                        >
+                          <FiPhone /> Postuler via WhatsApp
+                        </a>
+                      ) : job.application_method === 'email' && job.contact_email ? (
+                        <a
+                          href={`mailto:${job.contact_email}?subject=${encodeURIComponent(`Candidature - ${job.title}`)}&body=${encodeURIComponent(`Bonjour,\n\nJe souhaite postuler pour le poste "${job.title}" publié sur votre plateforme.\n\nVeuillez trouver ma candidature ci-jointe.\n\nCordialement`)}`}
+                          className="btn btn-primary btn-lg"
+                          style={{ width: '100%', textAlign: 'center' }}
+                        >
+                          <FiMail /> Postuler par Email
+                        </a>
+                      ) : (
+                        <button className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={() => setShowApplyModal(true)}>
+                          Postuler maintenant
+                        </button>
+                      )}
+                    </>
                   )}
                   <button className={`btn btn-secondary btn-lg save-btn ${saved ? 'saved' : ''}`} onClick={handleToggleSave}>
                     <FiHeart /> {saved ? 'Sauvegardé' : 'Sauvegarder'}
@@ -220,10 +244,50 @@ export default function JobDetail() {
                   </div>
                   <p className="company-name">{recruiter?.company || job.company}</p>
                 </div>
-                {recruiter?.company_description && (
+                {recruiter?.company_description ? (
                   <p className="company-description">{recruiter.company_description}</p>
+                ) : (
+                  <p className="company-description company-absent">Aucune description disponible</p>
                 )}
-                <p className="recruiter-name">Publié par {recruiter?.company || job.company}</p>
+                <div className="company-contacts">
+                  <div className="company-contact-item">
+                    <FiMail size={14} />
+                    {recruiter?.company_email ? (
+                      <a href={`mailto:${recruiter.company_email}`}>{recruiter.company_email}</a>
+                    ) : (
+                      <span className="company-absent">Non renseigné</span>
+                    )}
+                  </div>
+                  <div className="company-contact-item">
+                    <FiPhone size={14} />
+                    {recruiter?.company_phone ? (
+                      <a href={`tel:${recruiter.company_phone}`}>{recruiter.company_phone}</a>
+                    ) : (
+                      <span className="company-absent">Non renseigné</span>
+                    )}
+                  </div>
+                  <div className="company-contact-item">
+                    <FiGlobe size={14} />
+                    {recruiter?.website ? (
+                      <a href={recruiter.website} target="_blank" rel="noopener noreferrer">{recruiter.website.replace(/^https?:\/\//, '')}</a>
+                    ) : (
+                      <span className="company-absent">Non renseigné</span>
+                    )}
+                  </div>
+                </div>
+                {(recruiter?.linkedin || recruiter?.facebook || recruiter?.twitter) && (
+                  <div className="company-socials">
+                    {recruiter.linkedin && (
+                      <a href={recruiter.linkedin} target="_blank" rel="noopener noreferrer" className="social-link" title="LinkedIn"><FiLinkedin /></a>
+                    )}
+                    {recruiter.facebook && (
+                      <a href={recruiter.facebook} target="_blank" rel="noopener noreferrer" className="social-link" title="Facebook"><FiFacebook /></a>
+                    )}
+                    {recruiter.twitter && (
+                      <a href={recruiter.twitter} target="_blank" rel="noopener noreferrer" className="social-link" title="Twitter"><FiTwitter /></a>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -15,6 +15,12 @@ export default function Profile() {
     country: user?.country || '',
     company: user?.company || '',
     company_description: user?.company_description || '',
+    company_email: user?.company_email || '',
+    company_phone: user?.company_phone || '',
+    website: user?.website || '',
+    linkedin: user?.linkedin || '',
+    facebook: user?.facebook || '',
+    twitter: user?.twitter || '',
     skills: user?.skills || [],
     preferred_categories: user?.preferred_categories || [],
     preferred_types: user?.preferred_types || [],
@@ -99,8 +105,8 @@ export default function Profile() {
   return (
     <div>
       <div className="page-header">
-        <h1>Mon Profil</h1>
-        <p>Gérez vos informations personnelles</p>
+        <h1>{user?.role === 'recruiter' ? 'Profil Entreprise' : 'Mon Profil'}</h1>
+        <p>{user?.role === 'recruiter' ? 'Gérez les informations de votre entreprise' : 'Gérez vos informations personnelles'}</p>
       </div>
 
       <div className="profile-tabs">
@@ -133,53 +139,94 @@ export default function Profile() {
               onChange={handleAvatarChange}
               style={{ display: 'none' }}
             />
-            <p className="avatar-hint">Cliquez pour changer la photo (max 2 Mo)</p>
+            <p className="avatar-hint">{user?.role === 'recruiter' ? 'Logo de l\'entreprise (max 2 Mo)' : 'Cliquez pour changer la photo (max 2 Mo)'}</p>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label>Prénom</label>
-              <input className="form-control" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} required />
-            </div>
-            <div className="form-group">
-              <label>Nom</label>
-              <input className="form-control" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} required />
-            </div>
-          </div>
-
-          {user?.role === 'recruiter' && (
+          {user?.role === 'recruiter' ? (
             <>
               <div className="form-group">
-                <label>Nom de l'entreprise</label>
-                <input className="form-control" placeholder="Nom de votre entreprise" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+                <label>Nom de l'entreprise *</label>
+                <input className="form-control" placeholder="Nom de votre entreprise" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} required />
               </div>
               <div className="form-group">
-                <label>Description de l'entreprise</label>
-                <textarea className="form-control" rows={4} placeholder="Décrivez votre entreprise, ses activités, sa culture..." value={form.company_description} onChange={(e) => setForm({ ...form, company_description: e.target.value })} />
+                <label>Description de l'entreprise *</label>
+                <textarea className="form-control" rows={4} placeholder="Décrivez votre entreprise, ses activités, sa culture..." value={form.company_description} onChange={(e) => setForm({ ...form, company_description: e.target.value })} required />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Email de l'entreprise *</label>
+                  <input type="email" className="form-control" placeholder="contact@entreprise.com" value={form.company_email} onChange={(e) => setForm({ ...form, company_email: e.target.value })} required />
+                </div>
+                <div className="form-group">
+                  <label>Téléphone de l'entreprise *</label>
+                  <input className="form-control" placeholder="+237 6XX XXX XXX" value={form.company_phone} onChange={(e) => setForm({ ...form, company_phone: e.target.value })} required />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Pays *</label>
+                  <input className="form-control" placeholder="Cameroun" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} required />
+                </div>
+                <div className="form-group">
+                  <label>Ville *</label>
+                  <input className="form-control" placeholder="Douala" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} required />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Site web (optionnel)</label>
+                <input className="form-control" placeholder="https://www.entreprise.com" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} />
+              </div>
+              <div className="form-section">
+                <h3>Réseaux sociaux (optionnel)</h3>
+                <div className="form-group">
+                  <label>LinkedIn</label>
+                  <input className="form-control" placeholder="https://linkedin.com/company/..." value={form.linkedin} onChange={(e) => setForm({ ...form, linkedin: e.target.value })} />
+                </div>
+                <div className="form-group">
+                  <label>Facebook</label>
+                  <input className="form-control" placeholder="https://facebook.com/..." value={form.facebook} onChange={(e) => setForm({ ...form, facebook: e.target.value })} />
+                </div>
+                <div className="form-group">
+                  <label>Twitter / X</label>
+                  <input className="form-control" placeholder="https://x.com/..." value={form.twitter} onChange={(e) => setForm({ ...form, twitter: e.target.value })} />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Prénom</label>
+                  <input className="form-control" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} required />
+                </div>
+                <div className="form-group">
+                  <label>Nom</label>
+                  <input className="form-control" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} required />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Téléphone</label>
+                <input className="form-control" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Pays</label>
+                  <input className="form-control" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} />
+                </div>
+                <div className="form-group">
+                  <label>Ville</label>
+                  <input className="form-control" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Bio</label>
+                <textarea className="form-control" rows={4} placeholder="Parlez un peu de vous..." value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} />
               </div>
             </>
           )}
-
-          <div className="form-group">
-            <label>Téléphone</label>
-            <input className="form-control" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Pays</label>
-              <input className="form-control" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} />
-            </div>
-            <div className="form-group">
-              <label>Ville</label>
-              <input className="form-control" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label>Bio</label>
-            <textarea className="form-control" rows={4} placeholder="Parlez un peu de vous..." value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} />
-          </div>
 
           {user?.role === 'candidate' && (
             <>
