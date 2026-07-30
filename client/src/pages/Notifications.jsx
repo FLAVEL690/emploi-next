@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FiBell, FiCheckCircle } from 'react-icons/fi';
 import { getNotifications, markAllNotificationsRead, markNotificationRead } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './Notifications.css';
 
 export default function Notifications() {
-  const { authUser } = useAuth();
+  const { authUser, user } = useAuth();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -61,8 +63,21 @@ export default function Notifications() {
           {notifications.map(notif => (
             <div
               key={notif.id}
-              className={`notification-item ${!notif.is_read ? 'unread' : ''}`}
-              onClick={() => !notif.is_read && markRead(notif.id)}
+              className={`notification-item ${!notif.is_read ? 'unread' : ''} ${notif.related_id ? 'clickable' : ''}`}
+              onClick={() => {
+                if (!notif.is_read) markRead(notif.id);
+                if (notif.related_id) {
+                  if (notif.type === 'job_match') {
+                    navigate(`/jobs/${notif.related_id}`);
+                  } else if (notif.type === 'candidates_match') {
+                    navigate(`/recruiter/jobs/${notif.related_id}/matching`);
+                  } else if (notif.type === 'new_application') {
+                    navigate(user?.role === 'recruiter' ? `/recruiter/jobs/${notif.related_id}` : `/jobs/${notif.related_id}`);
+                  } else if (notif.type === 'application_update') {
+                    navigate(`/jobs/${notif.related_id}`);
+                  }
+                }
+              }}
             >
               <div className="notif-dot"></div>
               <div className="notif-content">

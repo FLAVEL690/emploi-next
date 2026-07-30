@@ -117,7 +117,8 @@ export function generateJobDescription({ title, category, type, mode, experience
   const typeLabels = {
     'full-time': 'temps plein',
     'part-time': 'temps partiel',
-    'contract': 'contrat',
+    'cdd': 'CDD',
+    'cdi': 'CDI',
     'internship': 'stage',
     'freelance': 'freelance'
   };

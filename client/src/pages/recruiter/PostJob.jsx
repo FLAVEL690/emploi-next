@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { getCategories, createJob } from '../../services/api';
 import { generateJobDescription } from '../../services/matching';
+import { notifyMatchingOnJobCreated } from '../../services/notifications';
 import { useAuth } from '../../context/AuthContext';
 import { FiSave, FiTrash2, FiZap, FiX, FiAlertCircle } from 'react-icons/fi';
 import './Recruiter.css';
@@ -9,7 +10,7 @@ import './Recruiter.css';
 const DRAFT_KEY = 'postjob_draft';
 const INITIAL_FORM = {
   title: '', description: '', category: '', type: 'full-time', mode: 'on-site',
-  salary: '', country: '', city: '', district: '', requirements: '',
+  salaryType: 'paid', salary: '', country: '', city: '', district: '', requirements: '',
   benefits: '', experienceLevel: 'any', expiresAt: '', skills: [],
   requireCv: true, requireCoverLetter: false, otherDocuments: '',
   applicationMethod: 'platform', whatsappNumber: '', contactEmail: ''
@@ -31,7 +32,7 @@ export default function PostJob() {
   const [draftStatus, setDraftStatus] = useState(null);
   const draft = loadDraft();
   const [form, setForm] = useState(() => {
-    if (draft) return { ...INITIAL_FORM, ...draft, skills: draft.skills || [] };
+    if (draft) return { ...INITIAL_FORM, ...draft, skills: draft.skills || [], salaryType: draft.salaryType || 'paid' };
     return INITIAL_FORM;
   });
   const [hasDraft, setHasDraft] = useState(!!draft);
@@ -73,8 +74,10 @@ export default function PostJob() {
     e.preventDefault();
     setLoading(true);
     try {
-      await createJob(form, authUser.id, user?.company);
+      const createdJob = await createJob(form, authUser.id, user?.company);
       localStorage.removeItem(DRAFT_KEY);
+      // Déclencher les notifications de matching en arrière-plan
+      notifyMatchingOnJobCreated(createdJob).catch(() => {});
       alert('Offre publiée avec succès !');
       navigate('/recruiter/jobs');
     } catch (error) {
@@ -216,7 +219,8 @@ export default function PostJob() {
             <select className="form-control" value={form.type} onChange={(e) => update('type', e.target.value)} required>
               <option value="full-time">Temps plein</option>
               <option value="part-time">Temps partiel</option>
-              <option value="contract">Contrat</option>
+              <option value="cdd">CDD</option>
+              <option value="cdi">CDI</option>
               <option value="internship">Stage</option>
               <option value="freelance">Freelance</option>
             </select>
@@ -231,8 +235,18 @@ export default function PostJob() {
           </div>
         </div>
         <div className="form-group">
-          <label>Salaire (optionnel)</label>
-          <input className="form-control" placeholder="Ex: 300 000 - 500 000 FCFA/mois" value={form.salary} onChange={(e) => update('salary', e.target.value)} />
+          <label>Rémunération *</label>
+          <div className="salary-toggle">
+            <button type="button" className={`salary-btn ${form.salaryType === 'paid' ? 'active' : ''}`} onClick={() => update('salaryType', 'paid')}>
+              Rémunéré
+            </button>
+            <button type="button" className={`salary-btn ${form.salaryType === 'unpaid' ? 'active' : ''}`} onClick={() => { update('salaryType', 'unpaid'); update('salary', 'Non rémunéré'); }}>
+              Non rémunéré
+            </button>
+          </div>
+          {form.salaryType === 'paid' && (
+            <input className="form-control" style={{ marginTop: 10 }} placeholder="Ex: 300 000 - 500 000 FCFA/mois" value={form.salary === 'Non rémunéré' ? '' : form.salary} onChange={(e) => update('salary', e.target.value)} required />
+          )}
         </div>
         <div className="form-row">
           <div className="form-group">

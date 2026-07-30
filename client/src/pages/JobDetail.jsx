@@ -83,7 +83,7 @@ export default function JobDetail() {
   if (!job) return null;
 
   const modeLabels = { 'on-site': 'Présentiel', 'remote': 'En ligne', 'hybrid': 'Hybride' };
-  const typeLabels = { 'full-time': 'Temps plein', 'part-time': 'Temps partiel', 'contract': 'Contrat', 'internship': 'Stage', 'freelance': 'Freelance' };
+  const typeLabels = { 'full-time': 'Temps plein', 'part-time': 'Temps partiel', 'cdd': 'CDD', 'cdi': 'CDI', 'contract': 'Contrat', 'internship': 'Stage', 'freelance': 'Freelance' };
   const levelLabels = { 'junior': 'Junior', 'mid': 'Intermédiaire', 'senior': 'Senior', 'any': 'Tous niveaux' };
 
   const recruiter = job.profiles;
@@ -145,7 +145,7 @@ export default function JobDetail() {
               <span><FiMapPin /> {job.city}{job.district ? `, ${job.district}` : ''}, {job.country}</span>
               <span><FiCalendar /> Expire le {new Date(job.expires_at).toLocaleDateString('fr-FR')}</span>
               <span><FiEye /> {job.views} vues</span>
-              {job.salary && <span><FiDollarSign /> {job.salary}</span>}
+              <span><FiDollarSign /> {job.salary || 'Non renseigné'}</span>
             </div>
 
             <div className="job-detail-section">

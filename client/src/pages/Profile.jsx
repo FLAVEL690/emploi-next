@@ -308,7 +308,8 @@ export default function Profile() {
                     {[
                       { value: 'full-time', label: 'Temps plein' },
                       { value: 'part-time', label: 'Temps partiel' },
-                      { value: 'contract', label: 'Contrat' },
+                      { value: 'cdd', label: 'CDD' },
+                      { value: 'cdi', label: 'CDI' },
                       { value: 'internship', label: 'Stage' },
                       { value: 'freelance', label: 'Freelance' }
                     ].map(t => (

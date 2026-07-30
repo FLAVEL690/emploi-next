@@ -20,3 +20,7 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS twitter TEXT;
 
 -- Ajouter les compétences aux offres d'emploi
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS skills TEXT[] DEFAULT '{}';
+
+-- Mettre à jour la contrainte de type de contrat (ajouter CDD et CDI)
+ALTER TABLE jobs DROP CONSTRAINT IF EXISTS jobs_type_check;
+ALTER TABLE jobs ADD CONSTRAINT jobs_type_check CHECK (type IN ('full-time', 'part-time', 'cdd', 'cdi', 'contract', 'internship', 'freelance'));

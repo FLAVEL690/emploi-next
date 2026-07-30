@@ -123,7 +123,8 @@ export default function Jobs() {
                   <option value="">Tous</option>
                   <option value="full-time">Temps plein</option>
                   <option value="part-time">Temps partiel</option>
-                  <option value="contract">Contrat</option>
+                  <option value="cdd">CDD</option>
+                  <option value="cdi">CDI</option>
                   <option value="internship">Stage</option>
                   <option value="freelance">Freelance</option>
                 </select>

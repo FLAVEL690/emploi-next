@@ -4,7 +4,7 @@ import './JobCard.css';
 
 export default function JobCard({ job }) {
   const modeLabels = { 'on-site': 'Présentiel', 'remote': 'En ligne', 'hybrid': 'Hybride' };
-  const typeLabels = { 'full-time': 'Temps plein', 'part-time': 'Temps partiel', 'contract': 'Contrat', 'internship': 'Stage', 'freelance': 'Freelance' };
+  const typeLabels = { 'full-time': 'Temps plein', 'part-time': 'Temps partiel', 'cdd': 'CDD', 'cdi': 'CDI', 'contract': 'Contrat', 'internship': 'Stage', 'freelance': 'Freelance' };
 
   const timeAgo = (date) => {
     const now = new Date();
@@ -47,7 +47,7 @@ export default function JobCard({ job }) {
         <span><FiClock size={14} /> {timeAgo(job.created_at)}</span>
       </div>
 
-      {job.salary && <p className="job-card-salary">{job.salary}</p>}
+      <p className="job-card-salary">{job.salary || 'Non rémunéré'}</p>
     </Link>
   );
 }

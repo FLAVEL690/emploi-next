@@ -15,8 +15,12 @@
   transition: background 0.15s;
 }
 
-.notification-item:hover {
+.notification-item.clickable:hover {
   background: var(--gray-100);
+}
+
+.notification-item:not(.clickable) {
+  cursor: default;
 }
 
 .notification-item.unread {
