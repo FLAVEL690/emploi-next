@@ -75,6 +75,8 @@ export default function Notifications() {
                     navigate(user?.role === 'recruiter' ? `/recruiter/jobs/${notif.related_id}` : `/jobs/${notif.related_id}`);
                   } else if (notif.type === 'application_update') {
                     navigate(`/jobs/${notif.related_id}`);
+                  } else if (notif.type === 'new_message') {
+                    navigate(user?.role === 'recruiter' ? `/recruiter/chat/${notif.related_id}` : `/candidate/chat/${notif.related_id}`);
                   }
                 }
               }}

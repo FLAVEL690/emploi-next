@@ -11,7 +11,7 @@ export async function notifyMatchingOnJobCreated(job) {
 
   const matchedCandidates = candidates
     .map(c => ({ ...c, matchScore: computeMatchScore(c, job) }))
-    .filter(c => c.matchScore >= 70);
+    .filter(c => c.matchScore >= 60);
 
   if (matchedCandidates.length === 0) return;
 
@@ -27,7 +27,7 @@ export async function notifyMatchingOnJobCreated(job) {
   await supabase.from('notifications').insert({
     user_id: job.recruiter_id,
     type: 'candidates_match',
-    message: `${matchedCandidates.length} candidat(s) potentiel(s) correspondent à votre offre "${job.title}" à 70%+`,
+    message: `${matchedCandidates.length} candidat(s) potentiel(s) correspondent à votre offre "${job.title}" à 60%+`,
     related_id: job.id
   });
 }

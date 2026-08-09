@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiMenu, FiX, FiBell, FiUser, FiLogOut, FiGrid, FiLogIn, FiUserPlus, FiMessageCircle } from 'react-icons/fi';
+import { FiMenu, FiX, FiBell, FiUser, FiLogOut, FiGrid, FiLogIn, FiUserPlus, FiMessageCircle, FiBellOff } from 'react-icons/fi';
+import { enablePushNotifications, disablePushNotifications, getPushStatus } from '../../services/push';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -10,7 +11,27 @@ export default function Navbar() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [pushStatus, setPushStatus] = useState('unsupported');
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (!user) return;
+    getPushStatus().then(setPushStatus).catch(() => setPushStatus('unsupported'));
+  }, [user]);
+
+  const handleTogglePush = async () => {
+    try {
+      if (pushStatus === 'enabled') {
+        await disablePushNotifications();
+        setPushStatus('default');
+      } else {
+        const result = await enablePushNotifications();
+        setPushStatus(result.granted ? 'enabled' : result.reason === 'denied' ? 'denied' : 'default');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -93,6 +114,22 @@ export default function Navbar() {
                   <Link to="/notifications" onClick={() => setDropdownOpen(false)}>
                     <FiBell /> Notifications
                   </Link>
+                  {pushStatus !== 'unsupported' && (
+                    <button
+                      onClick={() => {
+                        handleTogglePush();
+                        setDropdownOpen(false);
+                      }}
+                      className={pushStatus === 'enabled' ? 'push-toggle enabled' : 'push-toggle'}
+                    >
+                      {pushStatus === 'enabled' ? <FiBell /> : <FiBellOff />}
+                      {pushStatus === 'enabled'
+                        ? 'Désactiver les notifications'
+                        : pushStatus === 'denied'
+                          ? 'Notifications bloquées (réactiver dans le navigateur)'
+                          : 'Activer les notifications'}
+                    </button>
+                  )}
                   <button onClick={handleLogout}>
                     <FiLogOut /> Déconnexion
                   </button>

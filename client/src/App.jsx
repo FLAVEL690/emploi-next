@@ -31,6 +31,7 @@ import Contact from './pages/Contact';
 import ForgotPassword from './pages/ForgotPassword';
 import WhatsAppButton from './components/common/WhatsAppButton';
 import LoadingScreen from './components/common/LoadingScreen';
+import { registerServiceWorker } from './services/push';
 import './index.css';
 import './App.css';
 
@@ -72,6 +73,10 @@ function HomeWithLoading() {
 }
 
 function App() {
+  useEffect(() => {
+    registerServiceWorker().catch(() => {});
+  }, []);
+
   return (
     <AuthProvider>
       <BrowserRouter>

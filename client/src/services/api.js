@@ -566,6 +566,30 @@ export async function sendMessage(conversationId, senderId, content, attachments
     .update({ updated_at: new Date().toISOString() })
     .eq('id', conversationId);
 
+  // Notification pour le destinataire (déclenche l'email via le trigger)
+  const { data: conv } = await supabase
+    .from('conversations')
+    .select('job_id, candidate_id, recruiter_id')
+    .eq('id', conversationId)
+    .single();
+
+  if (conv) {
+    const recipientId = conv.candidate_id === senderId ? conv.recruiter_id : conv.candidate_id;
+    const { data: job } = await supabase.from('jobs').select('title').eq('id', conv.job_id).single();
+    const { data: sender } = await supabase
+      .from('profiles')
+      .select('first_name, last_name')
+      .eq('id', senderId)
+      .single();
+    const senderName = [sender?.first_name, sender?.last_name].filter(Boolean).join(' ') || 'Un utilisateur';
+    await supabase.from('notifications').insert({
+      user_id: recipientId,
+      type: 'new_message',
+      message: `Nouveau message de ${senderName} concernant "${job?.title || 'votre offre'}"`,
+      related_id: conversationId
+    });
+  }
+
   return data;
 }
 
@@ -589,4 +613,32 @@ export async function uploadChatDocument(file) {
 
   const { data: urlData } = supabase.storage.from('chat-documents').getPublicUrl(data.path);
   return { path: data.path, url: urlData.publicUrl };
+}
+
+// ============ NOTIFICATIONS PUSH WEB ============
+
+function encodeKey(arrayBuffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+}
+
+export async function savePushSubscription(subscription) {
+  const { data: { user } } = await supabase.auth.getUser();
+  const { error } = await supabase
+    .from('push_subscriptions')
+    .upsert({
+      user_id: user.id,
+      endpoint: subscription.endpoint,
+      p256dh: encodeKey(subscription.getKey('p256dh')),
+      auth: encodeKey(subscription.getKey('auth')),
+      user_agent: navigator.userAgent
+    }, { onConflict: 'endpoint' });
+  if (error) throw error;
+}
+
+export async function deletePushSubscription(endpoint) {
+  const { error } = await supabase
+    .from('push_subscriptions')
+    .delete()
+    .eq('endpoint', endpoint);
+  if (error) throw error;
 }
