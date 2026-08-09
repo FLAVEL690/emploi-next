@@ -13,8 +13,6 @@ export default function JobDetail() {
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
-  const [coverLetter, setCoverLetter] = useState('');
-  const [showApplyModal, setShowApplyModal] = useState(false);
   const [saved, setSaved] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
 
@@ -58,10 +56,9 @@ export default function JobDetail() {
 
     setApplying(true);
     try {
-      await applyToJob(parseInt(id), authUser.id, coverLetter);
+      await applyToJob(parseInt(id), authUser.id);
       setHasApplied(true);
-      setShowApplyModal(false);
-      openChat();
+      await openChat();
     } catch (error) {
       alert(error.message || 'Erreur lors de la candidature');
     } finally {
@@ -201,8 +198,8 @@ export default function JobDetail() {
                           <FiMessageCircle /> Discuter avec l'entreprise
                         </button>
                       ) : (
-                        <button className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={() => setShowApplyModal(true)}>
-                          Postuler maintenant
+                        <button className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={handleApply} disabled={applying}>
+                          {applying ? 'Ouverture du chat...' : 'Postuler maintenant'}
                         </button>
                       )}
                     </>
@@ -269,52 +266,6 @@ export default function JobDetail() {
           </div>
         </div>
 
-        {showApplyModal && (
-          <div className="modal-overlay" onClick={() => setShowApplyModal(false)}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <h2>Postuler - {job.title}</h2>
-              <p className="modal-subtitle">Chez {job.company}</p>
-
-              <div className="apply-docs-notice">
-                <strong><FiMessageCircle /> Candidature via la messagerie interne</strong>
-                <p>
-                  Votre candidature sera envoyée via le chat de la plateforme. Vous pourrez
-                  y joindre vos documents (CV, lettre de motivation...) jusqu'à 2 Mo chacun
-                  et échanger directement avec le recruteur.
-                </p>
-              </div>
-
-              {(job.require_cv || job.require_cover_letter || job.other_documents) && (
-                <div className="apply-docs-notice">
-                  <strong>Documents demandés :</strong>
-                  <ul>
-                    {job.require_cv && <li>CV (Curriculum Vitae)</li>}
-                    {job.require_cover_letter && <li>Lettre de motivation</li>}
-                    {job.other_documents && <li>{job.other_documents}</li>}
-                  </ul>
-                </div>
-              )}
-
-              <div className="form-group">
-                <label>Lettre de motivation {job.require_cover_letter ? '*' : '(optionnel)'}</label>
-                <textarea
-                  className="form-control"
-                  rows={6}
-                  placeholder="Expliquez pourquoi vous êtes le candidat idéal..."
-                  value={coverLetter}
-                  onChange={(e) => setCoverLetter(e.target.value)}
-                  required={job.require_cover_letter}
-                />
-              </div>
-              <div className="modal-actions">
-                <button className="btn btn-secondary" onClick={() => setShowApplyModal(false)}>Annuler</button>
-                <button className="btn btn-primary" onClick={handleApply} disabled={applying}>
-                  {applying ? 'Envoi...' : 'Envoyer ma candidature'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

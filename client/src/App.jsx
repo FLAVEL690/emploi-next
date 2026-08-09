@@ -31,6 +31,7 @@ import Contact from './pages/Contact';
 import ForgotPassword from './pages/ForgotPassword';
 import WhatsAppButton from './components/common/WhatsAppButton';
 import LoadingScreen from './components/common/LoadingScreen';
+import NotificationPrompt from './components/common/NotificationPrompt';
 import { registerServiceWorker } from './services/push';
 import './index.css';
 import './App.css';
@@ -81,6 +82,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
+        <NotificationPrompt />
         <Routes>
           <Route path="/" element={<HomeWithLoading />} />
           <Route path="/jobs" element={<PublicLayout><Jobs /></PublicLayout>} />

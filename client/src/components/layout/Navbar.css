@@ -190,6 +190,15 @@
   color: var(--primary);
 }
 
+.push-hint {
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--gray-500);
+  border-top: 1px solid var(--gray-100);
+  margin-top: 4px;
+}
+
 .menu-toggle {
   display: none;
   background: none;

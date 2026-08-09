@@ -9,6 +9,15 @@ export function isPushSupported() {
     && 'Notification' in window;
 }
 
+export function isIOS() {
+  return typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
+
+export function isStandalone() {
+  return typeof window !== 'undefined'
+    && (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
+}
+
 export async function registerServiceWorker() {
   if (!isPushSupported()) return null;
   const registration = await navigator.serviceWorker.register('/sw.js');

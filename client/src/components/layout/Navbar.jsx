@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FiMenu, FiX, FiBell, FiUser, FiLogOut, FiGrid, FiLogIn, FiUserPlus, FiMessageCircle, FiBellOff } from 'react-icons/fi';
-import { enablePushNotifications, disablePushNotifications, getPushStatus } from '../../services/push';
+import { enablePushNotifications, disablePushNotifications, getPushStatus, isIOS, isStandalone } from '../../services/push';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -138,6 +138,13 @@ export default function Navbar() {
                           ? 'Notifications bloquées (réactiver dans le navigateur)'
                           : 'Activer les notifications'}
                     </button>
+                  )}
+                  {isIOS() && pushStatus === 'unsupported' && (
+                    <div className="push-hint">
+                      {isStandalone()
+                        ? 'Votre iPhone nécessite iOS 16.4 ou plus pour recevoir les notifications push.'
+                        : 'Sur iPhone : ouvrez le menu Partager, puis « Ajouter à l\'écran d\'accueil », et relancez l\'application depuis cette icône pour activer les notifications.'}
+                    </div>
                   )}
                   <button onClick={handleLogout}>
                     <FiLogOut /> Déconnexion
