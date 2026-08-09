@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiMenu, FiX, FiBell, FiUser, FiLogOut, FiGrid, FiLogIn, FiUserPlus } from 'react-icons/fi';
+import { FiMenu, FiX, FiBell, FiUser, FiLogOut, FiGrid, FiLogIn, FiUserPlus, FiMessageCircle } from 'react-icons/fi';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -83,6 +83,9 @@ export default function Navbar() {
                 <div className="user-dropdown">
                   <Link to={getDashboardLink()} onClick={() => setDropdownOpen(false)}>
                     <FiGrid /> Dashboard
+                  </Link>
+                  <Link to={user.role === 'recruiter' ? '/recruiter/chat' : '/candidate/chat'} onClick={() => setDropdownOpen(false)}>
+                    <FiMessageCircle /> Messagerie
                   </Link>
                   <Link to="/profile" onClick={() => setDropdownOpen(false)}>
                     <FiUser /> Mon Profil

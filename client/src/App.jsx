@@ -21,6 +21,7 @@ import CandidateDashboard from './pages/candidate/CandidateDashboard';
 import MyApplications from './pages/candidate/MyApplications';
 import SavedJobs from './pages/candidate/SavedJobs';
 import RecommendedJobs from './pages/candidate/RecommendedJobs';
+import Chat from './pages/chat/Chat';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminJobs from './pages/admin/AdminJobs';
@@ -97,6 +98,8 @@ function App() {
             <Route path="jobs/:jobId/matching" element={<MatchingCandidates />} />
             <Route path="matching" element={<Matching />} />
             <Route path="post-job" element={<PostJob />} />
+            <Route path="chat" element={<Chat />} />
+            <Route path="chat/:conversationId" element={<Chat />} />
           </Route>
 
           <Route path="/candidate" element={
@@ -109,6 +112,8 @@ function App() {
             <Route path="applications" element={<MyApplications />} />
             <Route path="saved" element={<SavedJobs />} />
             <Route path="recommended" element={<RecommendedJobs />} />
+            <Route path="chat" element={<Chat />} />
+            <Route path="chat/:conversationId" element={<Chat />} />
           </Route>
 
           <Route path="/admin" element={

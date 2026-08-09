@@ -90,6 +90,30 @@ CREATE TABLE IF NOT EXISTS saved_jobs (
   UNIQUE(user_id, job_id)
 );
 
+-- Table des conversations (chat candidat-recruteur par offre)
+CREATE TABLE IF NOT EXISTS conversations (
+  id BIGSERIAL PRIMARY KEY,
+  job_id BIGINT NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+  candidate_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  recruiter_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(job_id, candidate_id)
+);
+
+-- Table des messages du chat
+CREATE TABLE IF NOT EXISTS messages (
+  id BIGSERIAL PRIMARY KEY,
+  conversation_id BIGINT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+  sender_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  content TEXT,
+  attachments JSONB DEFAULT '[]',
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id, created_at);
+
 -- Table des catégories
 CREATE TABLE IF NOT EXISTS categories (
   id BIGSERIAL PRIMARY KEY,
@@ -127,65 +151,129 @@ ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE advertisements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE saved_jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 
 -- PROFILES
+DROP POLICY IF EXISTS "Profiles visibles par tous" ON profiles;
 CREATE POLICY "Profiles visibles par tous" ON profiles FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
 CREATE POLICY "Users can insert own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
+DROP POLICY IF EXISTS "Admin can delete profiles" ON profiles;
 CREATE POLICY "Admin can delete profiles" ON profiles FOR DELETE USING (
   EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
 
 -- JOBS
+DROP POLICY IF EXISTS "Jobs actifs visibles par tous" ON jobs;
 CREATE POLICY "Jobs actifs visibles par tous" ON jobs FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Recruiters and admins can insert jobs" ON jobs;
 CREATE POLICY "Recruiters and admins can insert jobs" ON jobs FOR INSERT WITH CHECK (
   EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role IN ('recruiter', 'admin'))
 );
+DROP POLICY IF EXISTS "Owner or admin can update jobs" ON jobs;
 CREATE POLICY "Owner or admin can update jobs" ON jobs FOR UPDATE USING (
   recruiter_id = auth.uid() OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
+DROP POLICY IF EXISTS "Owner or admin can delete jobs" ON jobs;
 CREATE POLICY "Owner or admin can delete jobs" ON jobs FOR DELETE USING (
   recruiter_id = auth.uid() OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
 
 -- APPLICATIONS
+DROP POLICY IF EXISTS "Candidates see own applications" ON applications;
 CREATE POLICY "Candidates see own applications" ON applications FOR SELECT USING (
   candidate_id = auth.uid()
   OR EXISTS (SELECT 1 FROM jobs WHERE jobs.id = applications.job_id AND jobs.recruiter_id = auth.uid())
   OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
+DROP POLICY IF EXISTS "Candidates can apply" ON applications;
 CREATE POLICY "Candidates can apply" ON applications FOR INSERT WITH CHECK (
   candidate_id = auth.uid() AND EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'candidate')
 );
+DROP POLICY IF EXISTS "Recruiter or admin can update application status" ON applications;
 CREATE POLICY "Recruiter or admin can update application status" ON applications FOR UPDATE USING (
   EXISTS (SELECT 1 FROM jobs WHERE jobs.id = applications.job_id AND jobs.recruiter_id = auth.uid())
   OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
 
 -- NOTIFICATIONS
+DROP POLICY IF EXISTS "Users see own notifications" ON notifications;
 CREATE POLICY "Users see own notifications" ON notifications FOR SELECT USING (user_id = auth.uid());
+DROP POLICY IF EXISTS "System can insert notifications" ON notifications;
 CREATE POLICY "System can insert notifications" ON notifications FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Users can update own notifications" ON notifications;
 CREATE POLICY "Users can update own notifications" ON notifications FOR UPDATE USING (user_id = auth.uid());
 
 -- ADVERTISEMENTS
+DROP POLICY IF EXISTS "Ads visibles par tous" ON advertisements;
 CREATE POLICY "Ads visibles par tous" ON advertisements FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admin can manage ads" ON advertisements;
 CREATE POLICY "Admin can manage ads" ON advertisements FOR INSERT WITH CHECK (
   EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
+DROP POLICY IF EXISTS "Admin can update ads" ON advertisements;
 CREATE POLICY "Admin can update ads" ON advertisements FOR UPDATE USING (
   EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
+DROP POLICY IF EXISTS "Admin can delete ads" ON advertisements;
 CREATE POLICY "Admin can delete ads" ON advertisements FOR DELETE USING (
   EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
 
 -- SAVED JOBS
+DROP POLICY IF EXISTS "Users see own saved jobs" ON saved_jobs;
 CREATE POLICY "Users see own saved jobs" ON saved_jobs FOR SELECT USING (user_id = auth.uid());
+DROP POLICY IF EXISTS "Users can save jobs" ON saved_jobs;
 CREATE POLICY "Users can save jobs" ON saved_jobs FOR INSERT WITH CHECK (user_id = auth.uid());
+DROP POLICY IF EXISTS "Users can unsave jobs" ON saved_jobs;
 CREATE POLICY "Users can unsave jobs" ON saved_jobs FOR DELETE USING (user_id = auth.uid());
 
 -- CATEGORIES
+DROP POLICY IF EXISTS "Categories visibles par tous" ON categories;
 CREATE POLICY "Categories visibles par tous" ON categories FOR SELECT USING (true);
+
+-- CONVERSATIONS
+DROP POLICY IF EXISTS "Users see their own conversations" ON conversations;
+CREATE POLICY "Users see their own conversations" ON conversations FOR SELECT USING (
+  candidate_id = auth.uid() OR recruiter_id = auth.uid()
+);
+DROP POLICY IF EXISTS "Users can create conversations" ON conversations;
+CREATE POLICY "Users can create conversations" ON conversations FOR INSERT WITH CHECK (
+  candidate_id = auth.uid() OR recruiter_id = auth.uid()
+);
+DROP POLICY IF EXISTS "Users can update their conversations" ON conversations;
+CREATE POLICY "Users can update their conversations" ON conversations FOR UPDATE USING (
+  candidate_id = auth.uid() OR recruiter_id = auth.uid()
+);
+
+-- MESSAGES
+DROP POLICY IF EXISTS "Users see messages of their conversations" ON messages;
+CREATE POLICY "Users see messages of their conversations" ON messages FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM conversations c
+    WHERE c.id = messages.conversation_id
+      AND (c.candidate_id = auth.uid() OR c.recruiter_id = auth.uid())
+  )
+);
+DROP POLICY IF EXISTS "Users can send messages in their conversations" ON messages;
+CREATE POLICY "Users can send messages in their conversations" ON messages FOR INSERT WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM conversations c
+    WHERE c.id = messages.conversation_id
+      AND (c.candidate_id = auth.uid() OR c.recruiter_id = auth.uid())
+  )
+);
+DROP POLICY IF EXISTS "Users can update messages read status" ON messages;
+CREATE POLICY "Users can update messages read status" ON messages FOR UPDATE USING (
+  EXISTS (
+    SELECT 1 FROM conversations c
+    WHERE c.id = messages.conversation_id
+      AND (c.candidate_id = auth.uid() OR c.recruiter_id = auth.uid())
+  )
+);
 
 -- ============================================
 -- FONCTIONS ET TRIGGERS
@@ -229,6 +317,20 @@ $$ LANGUAGE plpgsql;
 -- Créer manuellement dans Supabase Dashboard > Storage :
 -- Bucket name: "ads" (public)
 -- Policies: allow authenticated admins to upload, allow public read
+
+-- ============================================
+-- STORAGE BUCKET pour les documents du chat
+-- ============================================
+-- Créer manuellement dans Supabase Dashboard > Storage :
+-- Bucket name: "chat-documents" (public)
+-- Policies: allow authenticated users to upload, allow public read
+
+-- ============================================
+-- REALTIME pour la messagerie
+-- ============================================
+-- Activer dans Supabase Dashboard > Database > Replication :
+-- publications "supabase_realtime" -> ajouter les tables
+-- conversations et messages
 
 -- ============================================
 -- CRÉER LE COMPTE ADMIN

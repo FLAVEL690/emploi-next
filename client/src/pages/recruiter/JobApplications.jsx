@@ -1,18 +1,30 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiMail, FiPhone, FiMapPin, FiFileText } from 'react-icons/fi';
-import { getJobApplications, updateApplicationStatus } from '../../services/api';
+import { FiArrowLeft, FiMail, FiPhone, FiMapPin, FiFileText, FiMessageCircle } from 'react-icons/fi';
+import { getJobApplications, updateApplicationStatus, getOrCreateConversation } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import '../candidate/Candidate.css';
 
 export default function JobApplications() {
   const { jobId } = useParams();
   const navigate = useNavigate();
+  const { authUser } = useAuth();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getJobApplications(jobId).then(setApplications).catch(() => navigate('/recruiter/jobs')).finally(() => setLoading(false));
   }, [jobId]);
+
+  const openChat = async (app) => {
+    if (!authUser) return;
+    try {
+      const conv = await getOrCreateConversation(app.job_id, app.candidate_id, authUser.id);
+      navigate(`/recruiter/chat/${conv.id}`);
+    } catch {
+      alert('Erreur lors de l\'ouverture de la discussion');
+    }
+  };
 
   const updateStatus = async (appId, status) => {
     try {
@@ -64,6 +76,9 @@ export default function JobApplications() {
                 </div>
               )}
               <div className="app-actions">
+                <button className="btn btn-secondary btn-sm" onClick={() => openChat(app)}>
+                  <FiMessageCircle /> Discuter
+                </button>
                 <select className="form-control" value={app.status} onChange={(e) => updateStatus(app.id, e.target.value)} style={{ width: 'auto' }}>
                   <option value="pending">En attente</option>
                   <option value="reviewed">Consultée</option>

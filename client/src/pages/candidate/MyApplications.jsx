@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { getMyApplications } from '../../services/api';
+import { Link, useNavigate } from 'react-router-dom';
+import { FiMessageCircle } from 'react-icons/fi';
+import { getMyApplications, getOrCreateConversation } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import './Candidate.css';
 
 export default function MyApplications() {
   const { authUser } = useAuth();
+  const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -13,6 +15,16 @@ export default function MyApplications() {
     if (!authUser) return;
     getMyApplications(authUser.id).then(setApplications).catch(() => {}).finally(() => setLoading(false));
   }, [authUser]);
+
+  const openChat = async (jobId, recruiterId) => {
+    if (!authUser) return;
+    try {
+      const conv = await getOrCreateConversation(jobId, authUser.id, recruiterId);
+      navigate(`/candidate/chat/${conv.id}`);
+    } catch {
+      alert('Erreur lors de l\'ouverture de la discussion');
+    }
+  };
 
   const statusLabels = {
     pending: { label: 'En attente', class: 'badge-warning' },
@@ -56,6 +68,11 @@ export default function MyApplications() {
               </div>
               <div className="app-date" style={{ fontSize: '13px', color: 'var(--gray-400)' }}>
                 Postulé le {new Date(app.created_at).toLocaleDateString('fr-FR')}
+              </div>
+              <div className="app-actions">
+                <button className="btn btn-secondary btn-sm" onClick={() => openChat(app.job_id, app.recruiter_id)}>
+                  <FiMessageCircle /> Discuter
+                </button>
               </div>
             </div>
           ))}

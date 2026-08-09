@@ -13,7 +13,7 @@ const INITIAL_FORM = {
   salaryType: 'paid', salary: '', country: '', city: '', district: '', requirements: '',
   benefits: '', experienceLevel: 'any', expiresAt: '', skills: [],
   requireCv: true, requireCoverLetter: false, otherDocuments: '',
-  applicationMethod: 'platform', whatsappNumber: '', contactEmail: ''
+  applicationMethod: 'platform'
 };
 
 function loadDraft() {
@@ -295,32 +295,11 @@ export default function PostJob() {
 
         <div className="form-section">
           <h3>Mode de réception des candidatures</h3>
-          <div className="radio-group">
-            <label className="radio-label">
-              <input type="radio" name="applicationMethod" value="platform" checked={form.applicationMethod === 'platform'} onChange={(e) => update('applicationMethod', e.target.value)} />
-              Via la plateforme (par défaut)
-            </label>
-            <label className="radio-label">
-              <input type="radio" name="applicationMethod" value="whatsapp" checked={form.applicationMethod === 'whatsapp'} onChange={(e) => update('applicationMethod', e.target.value)} />
-              Par WhatsApp
-            </label>
-            <label className="radio-label">
-              <input type="radio" name="applicationMethod" value="email" checked={form.applicationMethod === 'email'} onChange={(e) => update('applicationMethod', e.target.value)} />
-              Par Email
-            </label>
+          <div className="platform-note">
+            Les candidatures sont reçues uniquement via la messagerie interne de la plateforme.
+            Le candidat ouvre un chat pour cette offre et y joint les documents demandés
+            (CV, lettre de motivation...). Aucun contact (email, téléphone) n'est affiché au public.
           </div>
-          {form.applicationMethod === 'whatsapp' && (
-            <div className="form-group" style={{ marginTop: '12px' }}>
-              <label>Numéro WhatsApp *</label>
-              <input className="form-control" placeholder="Ex: +237 6XX XXX XXX" value={form.whatsappNumber} onChange={(e) => update('whatsappNumber', e.target.value)} required />
-            </div>
-          )}
-          {form.applicationMethod === 'email' && (
-            <div className="form-group" style={{ marginTop: '12px' }}>
-              <label>Adresse email *</label>
-              <input type="email" className="form-control" placeholder="recrutement@entreprise.com" value={form.contactEmail} onChange={(e) => update('contactEmail', e.target.value)} required />
-            </div>
-          )}
         </div>
 
         <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ marginTop: '8px' }}>

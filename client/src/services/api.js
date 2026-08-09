@@ -107,7 +107,7 @@ export async function getJobs({ category, city, country, district, mode, type, s
 export async function getJobById(id) {
   const { data, error } = await supabase
     .from('jobs')
-    .select('*, profiles!jobs_recruiter_id_fkey(first_name, last_name, email, company, avatar, company_description, company_email, company_phone, website, linkedin, facebook, twitter)')
+    .select('*, profiles!jobs_recruiter_id_fkey(first_name, last_name, company, avatar, company_description, website, linkedin, facebook, twitter)')
     .eq('id', id)
     .single();
   if (error) throw error;
@@ -154,9 +154,9 @@ export async function createJob(jobData, userId, company) {
       require_cv: jobData.requireCv ?? true,
       require_cover_letter: jobData.requireCoverLetter ?? false,
       other_documents: jobData.otherDocuments || null,
-      application_method: jobData.applicationMethod || 'platform',
-      whatsapp_number: jobData.whatsappNumber || null,
-      contact_email: jobData.contactEmail || null
+      application_method: 'platform',
+      whatsapp_number: null,
+      contact_email: null
     })
     .select()
     .single();
@@ -231,7 +231,7 @@ export async function applyToJob(jobId, candidateId, coverLetter) {
 export async function getMyApplications(candidateId) {
   const { data, error } = await supabase
     .from('applications')
-    .select('*, jobs(title, company, city, country, type, mode)')
+    .select('*, jobs(title, company, city, country, type, mode, recruiter_id)')
     .eq('candidate_id', candidateId)
     .order('created_at', { ascending: false });
   if (error) throw error;
@@ -462,4 +462,131 @@ export async function deleteAd(id) {
   }
   const { error } = await supabase.from('advertisements').delete().eq('id', id);
   if (error) throw error;
+}
+
+// ============ MESSAGERIE (CHAT) ============
+
+export async function getOrCreateConversation(jobId, candidateId, recruiterId) {
+  const { data: existing } = await supabase
+    .from('conversations')
+    .select('*')
+    .eq('job_id', jobId)
+    .eq('candidate_id', candidateId)
+    .single();
+  if (existing) return existing;
+
+  const { data, error } = await supabase
+    .from('conversations')
+    .insert({ job_id: jobId, candidate_id: candidateId, recruiter_id: recruiterId })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function getConversationById(id) {
+  const { data, error } = await supabase
+    .from('conversations')
+    .select(`
+      *,
+      job:jobs!conversations_job_id_fkey(id, title, company, require_cv, require_cover_letter, other_documents),
+      candidate:profiles!conversations_candidate_id_fkey(first_name, last_name, avatar),
+      recruiter:profiles!conversations_recruiter_id_fkey(first_name, last_name, company, avatar)
+    `)
+    .eq('id', id)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function getConversationsForUser(userId) {
+  const { data: convs, error } = await supabase
+    .from('conversations')
+    .select(`
+      *,
+      job:jobs!conversations_job_id_fkey(id, title, company, require_cv, require_cover_letter, other_documents),
+      candidate:profiles!conversations_candidate_id_fkey(first_name, last_name, avatar),
+      recruiter:profiles!conversations_recruiter_id_fkey(first_name, last_name, company, avatar)
+    `)
+    .or(`candidate_id.eq.${userId},recruiter_id.eq.${userId}`)
+    .order('updated_at', { ascending: false });
+  if (error) throw error;
+
+  const list = convs || [];
+  if (list.length === 0) return list;
+
+  const ids = list.map(c => c.id);
+  const { data: msgs } = await supabase
+    .from('messages')
+    .select('id, conversation_id, sender_id, content, created_at, is_read')
+    .in('conversation_id', ids)
+    .order('created_at', { ascending: true });
+
+  const byConv = {};
+  (msgs || []).forEach(m => {
+    if (!byConv[m.conversation_id]) byConv[m.conversation_id] = [];
+    byConv[m.conversation_id].push(m);
+  });
+
+  return list.map(c => {
+    const convMessages = byConv[c.id] || [];
+    return {
+      ...c,
+      lastMessage: convMessages[convMessages.length - 1] || null,
+      unreadCount: convMessages.filter(m => m.sender_id !== userId && !m.is_read).length
+    };
+  });
+}
+
+export async function getMessages(conversationId) {
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('conversation_id', conversationId)
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function sendMessage(conversationId, senderId, content, attachments = []) {
+  const { data, error } = await supabase
+    .from('messages')
+    .insert({
+      conversation_id: conversationId,
+      sender_id: senderId,
+      content: content || null,
+      attachments: attachments || []
+    })
+    .select()
+    .single();
+  if (error) throw error;
+
+  await supabase
+    .from('conversations')
+    .update({ updated_at: new Date().toISOString() })
+    .eq('id', conversationId);
+
+  return data;
+}
+
+export async function markConversationRead(conversationId, userId) {
+  await supabase
+    .from('messages')
+    .update({ is_read: true })
+    .eq('conversation_id', conversationId)
+    .neq('sender_id', userId)
+    .eq('is_read', false);
+}
+
+export async function uploadChatDocument(file) {
+  const ext = (file.name.split('.').pop() || 'bin').toLowerCase();
+  const fileName = `doc_${Date.now()}_${Math.round(Math.random() * 1000)}.${ext}`;
+
+  const { data, error } = await supabase.storage
+    .from('chat-documents')
+    .upload(fileName, file, { contentType: file.type || 'application/octet-stream' });
+  if (error) throw error;
+
+  const { data: urlData } = supabase.storage.from('chat-documents').getPublicUrl(data.path);
+  return { path: data.path, url: urlData.publicUrl };
 }

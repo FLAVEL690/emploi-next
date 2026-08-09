@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { FiMapPin, FiClock, FiBriefcase, FiMonitor, FiCalendar, FiEye, FiHeart, FiArrowLeft, FiDollarSign, FiStar, FiPhone, FiMail, FiFileText, FiGlobe, FiLinkedin, FiFacebook, FiTwitter } from 'react-icons/fi';
-import { getJobById, applyToJob, toggleSaveJob, checkJobSaved, getMyApplications } from '../services/api';
+import { FiMapPin, FiBriefcase, FiMonitor, FiCalendar, FiEye, FiHeart, FiArrowLeft, FiDollarSign, FiStar, FiFileText, FiGlobe, FiLinkedin, FiFacebook, FiTwitter, FiMessageCircle } from 'react-icons/fi';
+import { getJobById, applyToJob, toggleSaveJob, checkJobSaved, getMyApplications, getOrCreateConversation } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/common/SEO';
 import './JobDetail.css';
@@ -61,11 +61,21 @@ export default function JobDetail() {
       await applyToJob(parseInt(id), authUser.id, coverLetter);
       setHasApplied(true);
       setShowApplyModal(false);
-      alert('Candidature envoyée avec succès !');
+      openChat();
     } catch (error) {
       alert(error.message || 'Erreur lors de la candidature');
     } finally {
       setApplying(false);
+    }
+  };
+
+  const openChat = async () => {
+    if (!job || !authUser) return;
+    try {
+      const conv = await getOrCreateConversation(job.id, authUser.id, job.recruiter_id);
+      navigate(`/candidate/chat/${conv.id}`);
+    } catch {
+      alert('Candidature envoyée avec succès ! Vous pouvez retrouver la discussion dans votre messagerie.');
     }
   };
 
@@ -187,27 +197,9 @@ export default function JobDetail() {
                   {isProfileComplete() && (
                     <>
                       {hasApplied ? (
-                        <button className="btn btn-lg" style={{ width: '100%', background: 'var(--gray-200)', color: 'var(--gray-600)' }} disabled>
-                          Candidature envoyée
+                        <button className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={openChat}>
+                          <FiMessageCircle /> Discuter avec l'entreprise
                         </button>
-                      ) : job.application_method === 'whatsapp' && job.whatsapp_number ? (
-                        <a
-                          href={`https://wa.me/${job.whatsapp_number.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Bonjour, je souhaite postuler pour le poste "${job.title}" publié sur votre plateforme. Veuillez trouver ma candidature ci-jointe.`)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn btn-primary btn-lg"
-                          style={{ width: '100%', textAlign: 'center' }}
-                        >
-                          <FiPhone /> Postuler via WhatsApp
-                        </a>
-                      ) : job.application_method === 'email' && job.contact_email ? (
-                        <a
-                          href={`mailto:${job.contact_email}?subject=${encodeURIComponent(`Candidature - ${job.title}`)}&body=${encodeURIComponent(`Bonjour,\n\nJe souhaite postuler pour le poste "${job.title}" publié sur votre plateforme.\n\nVeuillez trouver ma candidature ci-jointe.\n\nCordialement`)}`}
-                          className="btn btn-primary btn-lg"
-                          style={{ width: '100%', textAlign: 'center' }}
-                        >
-                          <FiMail /> Postuler par Email
-                        </a>
                       ) : (
                         <button className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={() => setShowApplyModal(true)}>
                           Postuler maintenant
@@ -251,22 +243,6 @@ export default function JobDetail() {
                 )}
                 <div className="company-contacts">
                   <div className="company-contact-item">
-                    <FiMail size={14} />
-                    {recruiter?.company_email ? (
-                      <a href={`mailto:${recruiter.company_email}`}>{recruiter.company_email}</a>
-                    ) : (
-                      <span className="company-absent">Non renseigné</span>
-                    )}
-                  </div>
-                  <div className="company-contact-item">
-                    <FiPhone size={14} />
-                    {recruiter?.company_phone ? (
-                      <a href={`tel:${recruiter.company_phone}`}>{recruiter.company_phone}</a>
-                    ) : (
-                      <span className="company-absent">Non renseigné</span>
-                    )}
-                  </div>
-                  <div className="company-contact-item">
                     <FiGlobe size={14} />
                     {recruiter?.website ? (
                       <a href={recruiter.website} target="_blank" rel="noopener noreferrer">{recruiter.website.replace(/^https?:\/\//, '')}</a>
@@ -298,6 +274,15 @@ export default function JobDetail() {
             <div className="modal" onClick={(e) => e.stopPropagation()}>
               <h2>Postuler - {job.title}</h2>
               <p className="modal-subtitle">Chez {job.company}</p>
+
+              <div className="apply-docs-notice">
+                <strong><FiMessageCircle /> Candidature via la messagerie interne</strong>
+                <p>
+                  Votre candidature sera envoyée via le chat de la plateforme. Vous pourrez
+                  y joindre vos documents (CV, lettre de motivation...) jusqu'à 2 Mo chacun
+                  et échanger directement avec le recruteur.
+                </p>
+              </div>
 
               {(job.require_cv || job.require_cover_letter || job.other_documents) && (
                 <div className="apply-docs-notice">
