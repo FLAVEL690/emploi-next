@@ -5,7 +5,8 @@ const VAPID_PUBLIC_KEY = 'BMMhz9kqwsLbT7m64p53rhSi0u8glqIjs89F3L5xgplD92qjFakmi6
 export function isPushSupported() {
   return typeof window !== 'undefined'
     && 'serviceWorker' in navigator
-    && 'PushManager' in window;
+    && 'PushManager' in window
+    && 'Notification' in window;
 }
 
 export async function registerServiceWorker() {
@@ -14,10 +15,22 @@ export async function registerServiceWorker() {
   return registration;
 }
 
+async function getRegistration() {
+  if (!isPushSupported()) return null;
+  return navigator.serviceWorker.getRegistration('/sw.js');
+}
+
 export async function enablePushNotifications() {
   if (!isPushSupported()) return { granted: false, reason: 'unsupported' };
 
-  const registration = await navigator.serviceWorker.ready;
+  let registration;
+  try {
+    registration = await registerServiceWorker();
+  } catch (error) {
+    return { granted: false, reason: 'sw-error', error };
+  }
+  if (!registration) return { granted: false, reason: 'sw-error' };
+
   const permission = await Notification.requestPermission();
   if (permission !== 'granted') return { granted: false, reason: permission };
 
@@ -31,7 +44,8 @@ export async function enablePushNotifications() {
 
 export async function disablePushNotifications() {
   if (!isPushSupported()) return;
-  const registration = await navigator.serviceWorker.ready;
+  const registration = await getRegistration();
+  if (!registration) return;
   const subscription = await registration.pushManager.getSubscription();
   if (subscription) {
     await deletePushSubscription(subscription.endpoint).catch(() => {});
@@ -42,10 +56,15 @@ export async function disablePushNotifications() {
 export async function getPushStatus() {
   if (!isPushSupported()) return 'unsupported';
   if (Notification.permission === 'denied') return 'denied';
-  const registration = await navigator.serviceWorker.ready;
-  const subscription = await registration.pushManager.getSubscription();
-  if (subscription) return 'enabled';
-  return 'default';
+  try {
+    const registration = await getRegistration();
+    if (!registration) return 'default';
+    const subscription = await registration.pushManager.getSubscription();
+    if (subscription) return 'enabled';
+    return 'default';
+  } catch {
+    return 'default';
+  }
 }
 
 function urlBase64ToUint8Array(base64String) {

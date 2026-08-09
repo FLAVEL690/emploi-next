@@ -26,10 +26,19 @@ export default function Navbar() {
         setPushStatus('default');
       } else {
         const result = await enablePushNotifications();
-        setPushStatus(result.granted ? 'enabled' : result.reason === 'denied' ? 'denied' : 'default');
+        if (result.granted) {
+          setPushStatus('enabled');
+        } else if (result.reason === 'denied') {
+          setPushStatus('denied');
+        } else if (result.reason === 'sw-error') {
+          alert('Impossible d\'enregistrer le service worker (vérifiez que /sw.js est déployé en HTTPS).');
+        } else {
+          setPushStatus('default');
+        }
       }
     } catch (error) {
       console.error(error);
+      alert('Erreur lors de l\'activation des notifications : ' + (error?.message || error));
     }
   };
 
