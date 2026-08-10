@@ -380,6 +380,35 @@ export async function getAllJobs() {
   }));
 }
 
+export async function getAllApplications() {
+  const { data, error } = await supabase
+    .from('applications')
+    .select(`*,
+      jobs!applications_job_id_fkey(title, company, recruiter_id, profiles!jobs_recruiter_id_fkey(first_name)),
+      profiles!applications_candidate_id_fkey(first_name, last_name, email, phone, city, country, bio, cv, avatar, skills, preferred_categories, preferred_types, experience_level)
+    `)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data || []).map(a => ({
+    ...a,
+    jobTitle: a.jobs?.title,
+    company: a.jobs?.company,
+    recruiterName: a.jobs?.profiles?.first_name,
+    jobs: undefined,
+    profiles: undefined
+  }));
+}
+
+export async function getAllCandidates() {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('role', 'candidate')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
 async function getInterviewCandidateCount() {
   const { data: apps } = await supabase.from('applications').select('candidate_id, job_id');
   const { data: conversations } = await supabase

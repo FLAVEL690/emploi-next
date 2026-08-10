@@ -23,6 +23,7 @@ import SavedJobs from './pages/candidate/SavedJobs';
 import RecommendedJobs from './pages/candidate/RecommendedJobs';
 import Chat from './pages/chat/Chat';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminActivity from './pages/admin/AdminActivity';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminJobs from './pages/admin/AdminJobs';
 import AdminAds from './pages/admin/AdminAds';
@@ -130,6 +131,7 @@ function App() {
             </ProtectedRoute>
           }>
             <Route index element={<AdminDashboard />} />
+            <Route path="activity" element={<AdminActivity />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="jobs" element={<AdminJobs />} />
             <Route path="ads" element={<AdminAds />} />

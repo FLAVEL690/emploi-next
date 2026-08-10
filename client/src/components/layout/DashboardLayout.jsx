@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiGrid, FiBriefcase, FiUsers, FiImage, FiFileText, FiHeart, FiBell, FiUser, FiLogOut, FiPlusCircle, FiBarChart2, FiTarget, FiMessageCircle } from 'react-icons/fi';
+import { FiGrid, FiBriefcase, FiUsers, FiImage, FiFileText, FiHeart, FiBell, FiUser, FiLogOut, FiPlusCircle, FiBarChart2, FiTarget, FiMessageCircle, FiTrendingUp } from 'react-icons/fi';
 import './DashboardLayout.css';
 
 export default function DashboardLayout() {
@@ -16,6 +16,7 @@ export default function DashboardLayout() {
     if (user?.role === 'admin') {
       return [
         { to: '/admin', icon: <FiBarChart2 />, label: 'Statistiques', end: true },
+        { to: '/admin/activity', icon: <FiTrendingUp />, label: 'Suivi global' },
         { to: '/admin/users', icon: <FiUsers />, label: 'Utilisateurs' },
         { to: '/admin/jobs', icon: <FiBriefcase />, label: 'Toutes les offres' },
         { to: '/admin/ads', icon: <FiImage />, label: 'Publicités' },
