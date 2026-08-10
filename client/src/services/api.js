@@ -115,7 +115,10 @@ export async function getJobById(id) {
   const viewedKey = `job_viewed_${id}`;
   if (!sessionStorage.getItem(viewedKey)) {
     sessionStorage.setItem(viewedKey, '1');
-    supabase.rpc('increment_job_views', { job_id: id }).catch(() => { });
+    if (data) data.views = (data.views || 0) + 1;
+    supabase.rpc('increment_job_views', { job_id: id }).then(({ data: newViews }) => {
+      if (newViews != null && data) data.views = newViews;
+    }).catch(() => { });
   }
 
   return data;
