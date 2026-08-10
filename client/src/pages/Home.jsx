@@ -15,6 +15,8 @@ export default function Home() {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
+  const formatCount = (n) => (n > 100 ? '100+' : `${n || 0}+`);
+
   useEffect(() => {
     getJobStats().then(setStats).catch(() => { });
     getJobs({ limit: 6 }).then(res => setRecentJobs(res.jobs || [])).catch(() => { });
@@ -56,15 +58,15 @@ export default function Home() {
 
           <div className="hero-stats">
             <div className="stat-item">
-              <span className="stat-number">{stats.jobs}+</span>
+              <span className="stat-number">{formatCount(stats.jobs)}</span>
               <span className="stat-label">Offres actives</span>
             </div>
             <div className="stat-item">
-              <span className="stat-number">{stats.companies}+</span>
+              <span className="stat-number">{formatCount(stats.companies)}</span>
               <span className="stat-label">Entreprises</span>
             </div>
             <div className="stat-item">
-              <span className="stat-number">{stats.candidates}+</span>
+              <span className="stat-number">{formatCount(stats.candidates)}</span>
               <span className="stat-label">Candidats</span>
             </div>
           </div>
@@ -177,22 +179,22 @@ export default function Home() {
           <div className="stats-band-grid">
             <div className="stats-band-item">
               <FiBriefcase className="stats-band-icon" />
-              <span className="stat-number">{stats.jobs}+</span>
+              <span className="stat-number">{formatCount(stats.jobs)}</span>
               <span className="stat-label">Offres actives</span>
             </div>
             <div className="stats-band-item">
               <FiUsers className="stats-band-icon" />
-              <span className="stat-number">{stats.companies}+</span>
+              <span className="stat-number">{formatCount(stats.companies)}</span>
               <span className="stat-label">Entreprises</span>
             </div>
             <div className="stats-band-item">
               <FiUserCheck className="stats-band-icon" />
-              <span className="stat-number">{stats.candidates}+</span>
+              <span className="stat-number">{formatCount(stats.candidates)}</span>
               <span className="stat-label">Candidats</span>
             </div>
             <div className="stats-band-item">
               <FiSend className="stats-band-icon" />
-              <span className="stat-number">{stats.inInterview}+</span>
+              <span className="stat-number">{formatCount(stats.inInterview)}</span>
               <span className="stat-label">Candidatures en entretien</span>
             </div>
           </div>
