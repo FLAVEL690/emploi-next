@@ -241,7 +241,7 @@ export async function getMyApplications(candidateId) {
 export async function getJobApplications(jobId) {
   const { data, error } = await supabase
     .from('applications')
-    .select('*, profiles!applications_candidate_id_fkey(first_name, last_name, email, phone, city, country, bio, cv)')
+    .select('*, profiles!applications_candidate_id_fkey(first_name, last_name, email, phone, city, country, bio, cv, avatar, skills, preferred_categories, preferred_types, experience_level)')
     .eq('job_id', jobId)
     .order('created_at', { ascending: false });
   if (error) throw error;
@@ -380,17 +380,51 @@ export async function getAllJobs() {
   }));
 }
 
+async function getInterviewCandidateCount() {
+  const { data: apps } = await supabase.from('applications').select('candidate_id, job_id');
+  const { data: conversations } = await supabase
+    .from('conversations')
+    .select('id, job_id, candidate_id');
+  if (!conversations || conversations.length === 0) return 0;
+
+  const convIds = conversations.map(c => c.id);
+  const { data: msgs } = await supabase
+    .from('messages')
+    .select('conversation_id')
+    .in('conversation_id', convIds);
+
+  const convWithMsg = new Set((msgs || []).map(m => m.conversation_id));
+  const interviewPairs = new Set(
+    conversations
+      .filter(c => convWithMsg.has(c.id))
+      .map(c => `${c.job_id}:${c.candidate_id}`)
+  );
+  const inInterview = new Set(
+    (apps || [])
+      .filter(a => interviewPairs.has(`${a.job_id}:${a.candidate_id}`))
+      .map(a => a.candidate_id)
+  );
+  return inInterview.size;
+}
+
 export async function getAdminStats() {
   const now = new Date().toISOString();
-  const [users, recruiters, candidates, jobs, activeJobs, apps, ads] = await Promise.all([
+  const [users, recruiters, candidates, jobs, activeJobs, apps, ads, appStatuses] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'recruiter'),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'candidate'),
     supabase.from('jobs').select('*', { count: 'exact', head: true }),
     supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('is_active', true).gt('expires_at', now),
     supabase.from('applications').select('*', { count: 'exact', head: true }),
-    supabase.from('advertisements').select('*', { count: 'exact', head: true }).eq('is_active', true)
+    supabase.from('advertisements').select('*', { count: 'exact', head: true }).eq('is_active', true),
+    supabase.from('applications').select('status')
   ]);
+
+  const statuses = appStatuses.data || [];
+  const totalStatused = statuses.length;
+  const acceptedCount = statuses.filter(a => a.status === 'accepted').length;
+  const rejectedCount = statuses.filter(a => a.status === 'rejected').length;
+
   return {
     totalUsers: users.count || 0,
     recruiters: recruiters.count || 0,
@@ -398,7 +432,12 @@ export async function getAdminStats() {
     totalJobs: jobs.count || 0,
     activeJobs: activeJobs.count || 0,
     applications: apps.count || 0,
-    activeAds: ads.count || 0
+    activeAds: ads.count || 0,
+    inInterview: await getInterviewCandidateCount(),
+    acceptedCount,
+    rejectedCount,
+    acceptedPct: totalStatused ? Math.round((acceptedCount / totalStatused) * 100) : 0,
+    rejectedPct: totalStatused ? Math.round((rejectedCount / totalStatused) * 100) : 0
   };
 }
 

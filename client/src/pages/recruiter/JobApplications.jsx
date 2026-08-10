@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiMail, FiPhone, FiMapPin, FiFileText, FiMessageCircle } from 'react-icons/fi';
+import { FiArrowLeft, FiMail, FiPhone, FiMapPin, FiFileText, FiMessageCircle, FiUser, FiX, FiDownload } from 'react-icons/fi';
 import { getJobApplications, updateApplicationStatus, getOrCreateConversation } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import '../candidate/Candidate.css';
+
+const experienceLabels = { junior: 'Junior', mid: 'Intermédiaire', senior: 'Senior', any: 'Tous niveaux' };
 
 export default function JobApplications() {
   const { jobId } = useParams();
@@ -11,6 +13,7 @@ export default function JobApplications() {
   const { authUser } = useAuth();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [viewing, setViewing] = useState(null);
 
   useEffect(() => {
     getJobApplications(jobId).then(setApplications).catch(() => navigate('/recruiter/jobs')).finally(() => setLoading(false));
@@ -76,6 +79,9 @@ export default function JobApplications() {
                 </div>
               )}
               <div className="app-actions">
+                <button className="btn btn-secondary btn-sm" onClick={() => setViewing(app)}>
+                  <FiUser /> Voir le profil
+                </button>
                 <button className="btn btn-secondary btn-sm" onClick={() => openChat(app)}>
                   <FiMessageCircle /> Discuter
                 </button>
@@ -90,6 +96,85 @@ export default function JobApplications() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {viewing && (
+        <div className="profile-modal-overlay" onClick={() => setViewing(null)}>
+          <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="profile-modal-header">
+              <div className="app-avatar">
+                {viewing.avatar ? <img src={viewing.avatar} alt="Profil" /> : `${viewing.first_name?.[0]}${viewing.last_name?.[0]}`}
+              </div>
+              <div className="profile-modal-title">
+                <h3>{viewing.first_name} {viewing.last_name}</h3>
+                <span className="badge badge-info">{experienceLabels[viewing.experience_level] || 'Non renseigné'}</span>
+              </div>
+              <button className="profile-modal-close" onClick={() => setViewing(null)} aria-label="Fermer"><FiX /></button>
+            </div>
+
+            <div className="profile-modal-body">
+              <div className="profile-modal-contact">
+                <span><FiMail size={14} /> {viewing.email}</span>
+                {viewing.phone && <span><FiPhone size={14} /> {viewing.phone}</span>}
+                {(viewing.city || viewing.country) && (
+                  <span><FiMapPin size={14} /> {[viewing.city, viewing.country].filter(Boolean).join(', ')}</span>
+                )}
+              </div>
+
+              {viewing.bio && (
+                <div className="profile-modal-section">
+                  <h4>À propos</h4>
+                  <p>{viewing.bio}</p>
+                </div>
+              )}
+
+              {(viewing.skills?.length > 0 || viewing.preferred_categories?.length > 0 || viewing.preferred_types?.length > 0) && (
+                <div className="profile-modal-sections">
+                  {viewing.skills?.length > 0 && (
+                    <div className="profile-modal-section">
+                      <h4>Compétences</h4>
+                      <div className="profile-tags">
+                        {viewing.skills.map((s, i) => <span key={i} className="profile-tag">{s}</span>)}
+                      </div>
+                    </div>
+                  )}
+                  {viewing.preferred_categories?.length > 0 && (
+                    <div className="profile-modal-section">
+                      <h4>Catégories préférées</h4>
+                      <div className="profile-tags">
+                        {viewing.preferred_categories.map((c, i) => <span key={i} className="profile-tag">{c}</span>)}
+                      </div>
+                    </div>
+                  )}
+                  {viewing.preferred_types?.length > 0 && (
+                    <div className="profile-modal-section">
+                      <h4>Types de contrat préférés</h4>
+                      <div className="profile-tags">
+                        {viewing.preferred_types.map((t, i) => <span key={i} className="profile-tag">{t}</span>)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {viewing.cv && (
+                <div className="profile-modal-section">
+                  <h4>Curriculum Vitae</h4>
+                  <a href={viewing.cv} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm">
+                    <FiDownload /> Voir le CV
+                  </a>
+                </div>
+              )}
+
+              {viewing.cover_letter && (
+                <div className="profile-modal-section">
+                  <h4>Lettre de motivation</h4>
+                  <p>{viewing.cover_letter}</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

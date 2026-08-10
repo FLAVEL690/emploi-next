@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FiUsers, FiBriefcase, FiFileText, FiImage, FiTrendingUp } from 'react-icons/fi';
+import { FiUsers, FiBriefcase, FiFileText, FiImage, FiTrendingUp, FiMessageCircle, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import { getAdminStats } from '../../services/api';
 import '../recruiter/Recruiter.css';
 
@@ -64,6 +64,30 @@ export default function AdminDashboard() {
           <div className="stat-card-content">
             <span className="stat-card-value">{stats?.candidates || 0}</span>
             <span className="stat-card-label">Candidats</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginTop: '16px' }}>
+        <div className="stat-card">
+          <div className="stat-card-icon blue"><FiMessageCircle /></div>
+          <div className="stat-card-content">
+            <span className="stat-card-value">{stats?.inInterview || 0}</span>
+            <span className="stat-card-label">Candidats en entretien</span>
+          </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-icon green"><FiCheckCircle /></div>
+          <div className="stat-card-content">
+            <span className="stat-card-value">{stats?.acceptedPct || 0}%</span>
+            <span className="stat-card-label">Candidatures acceptées ({stats?.acceptedCount || 0})</span>
+          </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-icon orange"><FiXCircle /></div>
+          <div className="stat-card-content">
+            <span className="stat-card-value">{stats?.rejectedPct || 0}%</span>
+            <span className="stat-card-label">Candidatures refusées ({stats?.rejectedCount || 0})</span>
           </div>
         </div>
       </div>
