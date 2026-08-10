@@ -5,6 +5,8 @@
 -- sans pour autant avoir le droit de modifier l'offre.
 -- ============================================
 
+DROP FUNCTION IF EXISTS public.increment_job_views(BIGINT);
+
 CREATE OR REPLACE FUNCTION public.increment_job_views(job_id BIGINT)
 RETURNS INTEGER
 LANGUAGE sql
