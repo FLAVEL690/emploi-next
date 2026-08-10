@@ -188,18 +188,18 @@ export async function getCategories() {
 
 export async function getJobStats() {
   const now = new Date().toISOString();
-  const [jobsRes, companiesRes, candidatesRes, appsRes] = await Promise.all([
+  const [jobsRes, companiesRes, candidatesRes, interviewRes] = await Promise.all([
     supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('is_active', true).gt('expires_at', now),
     supabase.from('jobs').select('company').eq('is_active', true),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'candidate'),
-    supabase.from('applications').select('*', { count: 'exact', head: true })
+    supabase.rpc('get_platform_interview_count')
   ]);
   const uniqueCompanies = new Set((companiesRes.data || []).map(j => j.company)).size;
   return {
     jobs: jobsRes.count || 0,
     companies: uniqueCompanies,
     candidates: candidatesRes.count || 0,
-    applications: appsRes.count || 0
+    inInterview: interviewRes.data || 0
   };
 }
 

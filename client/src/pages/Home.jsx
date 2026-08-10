@@ -192,8 +192,8 @@ export default function Home() {
             </div>
             <div className="stats-band-item">
               <FiSend className="stats-band-icon" />
-              <span className="stat-number">{stats.applications}+</span>
-              <span className="stat-label">Candidatures envoyées</span>
+              <span className="stat-number">{stats.inInterview}+</span>
+              <span className="stat-label">Candidatures en entretien</span>
             </div>
           </div>
         </div>
