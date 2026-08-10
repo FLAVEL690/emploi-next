@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiSearch, FiBriefcase, FiArrowRight, FiTrendingUp, FiShield, FiZap } from 'react-icons/fi';
+import { FiSearch, FiBriefcase, FiArrowRight, FiTrendingUp, FiShield, FiZap, FiUsers, FiUserCheck, FiSend } from 'react-icons/fi';
 import { getJobs, getJobStats, getCategories, getPublicAds } from '../services/api';
 import JobCard from '../components/jobs/JobCard';
 import AdCarousel from '../components/common/AdCarousel';
@@ -167,6 +167,33 @@ export default function Home() {
             <div className="cta-buttons">
               <Link to="/register" className="btn btn-primary btn-lg">Commencer gratuitement</Link>
               <Link to="/jobs" className="btn btn-secondary btn-lg">Explorer les offres</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="stats-band">
+        <div className="container">
+          <div className="stats-band-grid">
+            <div className="stats-band-item">
+              <FiBriefcase className="stats-band-icon" />
+              <span className="stat-number">{stats.jobs}+</span>
+              <span className="stat-label">Offres actives</span>
+            </div>
+            <div className="stats-band-item">
+              <FiUsers className="stats-band-icon" />
+              <span className="stat-number">{stats.companies}+</span>
+              <span className="stat-label">Entreprises</span>
+            </div>
+            <div className="stats-band-item">
+              <FiUserCheck className="stats-band-icon" />
+              <span className="stat-number">{stats.candidates}+</span>
+              <span className="stat-label">Candidats</span>
+            </div>
+            <div className="stats-band-item">
+              <FiSend className="stats-band-icon" />
+              <span className="stat-number">{stats.applications}+</span>
+              <span className="stat-label">Candidatures envoyées</span>
             </div>
           </div>
         </div>

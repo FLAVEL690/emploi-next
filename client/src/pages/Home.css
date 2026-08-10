@@ -372,6 +372,80 @@
   border-color: var(--white);
 }
 
+.stats-band {
+  padding: 70px 20px;
+  background: linear-gradient(135deg, var(--gray-900) 0%, var(--primary-dark) 50%, var(--primary) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-band::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: -120px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(212, 165, 23, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.stats-band::after {
+  content: '';
+  position: absolute;
+  bottom: -140px;
+  right: -140px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(46, 125, 50, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.stats-band-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.stats-band-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  padding: 32px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(4px);
+  transition: var(--transition);
+}
+
+.stats-band-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
+}
+
+.stats-band-icon {
+  font-size: 28px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.stats-band .stat-number {
+  font-size: 36px;
+  color: var(--white);
+}
+
+.stats-band .stat-label {
+  opacity: 0.8;
+  color: var(--white);
+}
+
 .ads-banner {
   padding: 32px 20px;
   background: var(--gray-100);
@@ -404,6 +478,7 @@
   .features-grid { grid-template-columns: repeat(2, 1fr); }
   .recent-jobs-layout { grid-template-columns: 1fr; }
   .jobs-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-band-grid { grid-template-columns: repeat(2, 1fr); }
   .home-sidebar-ads {
     position: static;
   }
@@ -423,6 +498,10 @@
   .section-title { font-size: 26px; }
   .cta-content h2 { font-size: 28px; }
   .cta-buttons { flex-direction: column; }
+  .stats-band { padding: 50px 16px; }
+  .stats-band-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .stats-band-item { padding: 22px 12px; }
+  .stats-band .stat-number { font-size: 26px; }
   .ad-carousel-banner .ad-carousel-slide .ad-mobile-media { height: 250px; }
   .ad-carousel-inline .ad-carousel-slide .ad-mobile-media { height: 220px; }
   .ad-carousel-sidebar .ad-carousel-slide .ad-mobile-media { height: 200px; }
