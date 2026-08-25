@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { getCategories, createJob } from '../../services/api';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { getCategories, getJobById, createJob, updateJob } from '../../services/api';
 import { generateJobDescription } from '../../services/matching';
 import { notifyMatchingOnJobCreated } from '../../services/notifications';
 import { useAuth } from '../../context/AuthContext';
@@ -26,20 +26,59 @@ function loadDraft() {
 
 export default function PostJob() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, authUser } = useAuth();
+  const editJobId = searchParams.get('edit');
+  const isEditing = Boolean(editJobId);
   const [categories, setCategoriesList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [draftStatus, setDraftStatus] = useState(null);
   const draft = loadDraft();
   const [form, setForm] = useState(() => {
-    if (draft) return { ...INITIAL_FORM, ...draft, skills: draft.skills || [], salaryType: draft.salaryType || 'paid' };
+    if (draft && !editJobId) return { ...INITIAL_FORM, ...draft, skills: draft.skills || [], salaryType: draft.salaryType || 'paid' };
     return INITIAL_FORM;
   });
-  const [hasDraft, setHasDraft] = useState(!!draft);
+  const [hasDraft, setHasDraft] = useState(!!draft && !editJobId);
+  const [loadingJob, setLoadingJob] = useState(isEditing);
   const [skillInput, setSkillInput] = useState('');
   const saveTimeout = useRef(null);
 
   useEffect(() => { getCategories().then(setCategoriesList).catch(() => {}); }, []);
+
+  useEffect(() => {
+    if (!editJobId) return;
+
+    getJobById(editJobId)
+      .then((job) => {
+        setForm({
+          ...INITIAL_FORM,
+          title: job.title || '',
+          description: job.description || '',
+          category: job.category || '',
+          type: job.type || 'full-time',
+          mode: job.mode || 'on-site',
+          salaryType: job.salary === 'Non rémunéré' ? 'unpaid' : 'paid',
+          salary: job.salary || '',
+          country: job.country || '',
+          city: job.city || '',
+          district: job.district || '',
+          requirements: job.requirements || '',
+          benefits: job.benefits || '',
+          experienceLevel: job.experience_level || 'any',
+          expiresAt: job.expires_at ? job.expires_at.slice(0, 10) : '',
+          skills: job.skills || [],
+          requireCv: job.require_cv ?? true,
+          requireCoverLetter: job.require_cover_letter ?? false,
+          otherDocuments: job.other_documents || '',
+          applicationMethod: 'platform'
+        });
+      })
+      .catch((error) => {
+        alert(error.message || "Impossible de charger l'offre");
+        navigate('/recruiter/jobs');
+      })
+      .finally(() => setLoadingJob(false));
+  }, [editJobId, navigate]);
 
   const saveDraft = useCallback((formData) => {
     const hasContent = formData.title || formData.description || formData.category || formData.country || formData.city;
@@ -75,11 +114,49 @@ export default function PostJob() {
     e.preventDefault();
     setLoading(true);
     try {
-      const createdJob = await createJob(form, authUser.id, user?.company);
+      const jobData = {
+        title: form.title,
+        description: form.description,
+        category: form.category,
+        type: form.type,
+        mode: form.mode,
+        salary: form.salaryType === 'unpaid' ? 'Non rémunéré' : form.salary,
+        country: form.country,
+        city: form.city,
+        district: form.district,
+        requirements: form.requirements,
+        benefits: form.benefits,
+        experienceLevel: form.experienceLevel,
+        expiresAt: form.expiresAt,
+        skills: form.skills,
+        requireCv: form.requireCv,
+        requireCoverLetter: form.requireCoverLetter,
+        otherDocuments: form.otherDocuments
+      };
+      const savedJob = isEditing
+        ? await updateJob(editJobId, {
+            title: jobData.title,
+            description: jobData.description,
+            category: jobData.category,
+            type: jobData.type,
+            mode: jobData.mode,
+            salary: jobData.salary || null,
+            country: jobData.country,
+            city: jobData.city,
+            district: jobData.district || null,
+            requirements: jobData.requirements || null,
+            benefits: jobData.benefits || null,
+            experience_level: jobData.experienceLevel,
+            expires_at: jobData.expiresAt,
+            skills: jobData.skills,
+            require_cv: jobData.requireCv,
+            require_cover_letter: jobData.requireCoverLetter,
+            other_documents: jobData.otherDocuments || null
+          })
+        : await createJob(form, authUser.id, user?.company);
       localStorage.removeItem(DRAFT_KEY);
-      // Déclencher les notifications de matching en arrière-plan
-      notifyMatchingOnJobCreated(createdJob).catch(() => {});
-      alert('Offre publiée avec succès !');
+      if (!isEditing) notifyMatchingOnJobCreated(savedJob).catch(() => {});
+      alert(isEditing ? 'Offre modifiée avec succès !' : 'Offre publiée avec succès !');
       navigate('/recruiter/jobs');
     } catch (error) {
       alert(error.message || 'Erreur lors de la publication');
@@ -88,11 +165,13 @@ export default function PostJob() {
     }
   };
 
+  if (loadingJob) return <div className="loading-spinner"><div className="spinner"></div></div>;
+
   if (!isRecruiterProfileComplete()) {
     return (
       <div>
         <div className="page-header">
-          <h1>Publier une nouvelle offre</h1>
+          <h1>{isEditing ? "Modifier l'offre" : 'Publier une nouvelle offre'}</h1>
         </div>
         <div className="profile-incomplete-block">
           <FiAlertCircle size={32} />
@@ -109,8 +188,8 @@ export default function PostJob() {
       <div className="page-header">
         <div className="page-header-row">
           <div>
-            <h1>Publier une nouvelle offre</h1>
-            <p>Remplissez les informations pour publier votre annonce</p>
+            <h1>{isEditing ? "Modifier l'offre" : 'Publier une nouvelle offre'}</h1>
+            <p>{isEditing ? 'Mettez à jour les informations de votre annonce' : 'Remplissez les informations pour publier votre annonce'}</p>
           </div>
           <div className="draft-actions">
             {draftStatus === 'saved' && (
@@ -273,7 +352,7 @@ export default function PostJob() {
         </div>
         <div className="form-group">
           <label>Date d'expiration *</label>
-          <input type="date" className="form-control" value={form.expiresAt} onChange={(e) => update('expiresAt', e.target.value)} required min={new Date().toISOString().split('T')[0]} />
+          <input type="date" className="form-control" value={form.expiresAt} onChange={(e) => update('expiresAt', e.target.value)} required min={isEditing ? undefined : new Date().toISOString().split('T')[0]} />
         </div>
 
         <div className="form-section">
@@ -304,7 +383,7 @@ export default function PostJob() {
         </div>
 
         <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ marginTop: '8px' }}>
-          {loading ? 'Publication...' : "Publier l'offre"}
+          {loading ? (isEditing ? 'Enregistrement...' : 'Publication...') : (isEditing ? "Enregistrer les modifications" : "Publier l'offre")}
         </button>
       </form>
     </div>

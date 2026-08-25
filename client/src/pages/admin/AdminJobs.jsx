@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { FiTrash2 } from 'react-icons/fi';
+import { FiTrash2, FiEdit } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import { getAllJobs, deleteJob } from '../../services/api';
 import '../recruiter/Recruiter.css';
 
@@ -56,6 +57,9 @@ export default function AdminJobs() {
                   }
                 </td>
                 <td>
+                  <Link to={`/recruiter/post-job?edit=${job.id}`} className="action-btn" title="Modifier l'offre">
+                    <FiEdit />
+                  </Link>
                   <button className="action-btn red" onClick={() => handleDelete(job.id)}>
                     <FiTrash2 />
                   </button>
