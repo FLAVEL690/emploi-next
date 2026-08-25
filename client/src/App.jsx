@@ -29,10 +29,12 @@ import AdminJobs from './pages/admin/AdminJobs';
 import AdminAds from './pages/admin/AdminAds';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Privacy from './pages/Privacy';
 import ForgotPassword from './pages/ForgotPassword';
 import WhatsAppButton from './components/common/WhatsAppButton';
 import LoadingScreen from './components/common/LoadingScreen';
 import NotificationPrompt from './components/common/NotificationPrompt';
+import CookieBanner from './components/common/CookieBanner';
 import { registerServiceWorker } from './services/push';
 import './index.css';
 import './App.css';
@@ -84,12 +86,14 @@ function App() {
       <BrowserRouter>
         <ScrollToTop />
         <NotificationPrompt />
+        <CookieBanner />
         <Routes>
           <Route path="/" element={<HomeWithLoading />} />
           <Route path="/jobs" element={<PublicLayout><Jobs /></PublicLayout>} />
           <Route path="/jobs/:id" element={<PublicLayout><JobDetail /></PublicLayout>} />
           <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
           <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+          <Route path="/privacy" element={<PublicLayout><Privacy /></PublicLayout>} />
           <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
           <Route path="/forgot-password" element={<PublicLayout><ForgotPassword /></PublicLayout>} />
           <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />

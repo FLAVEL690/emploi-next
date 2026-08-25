@@ -19,6 +19,7 @@ export default function Footer() {
             <Link to="/jobs">Offres d'emploi</Link>
             <Link to="/about">A propos</Link>
             <Link to="/contact">Contact</Link>
+            <Link to="/privacy">Confidentialite et RGPD</Link>
             <Link to="/register">Creer un compte</Link>
           </div>
 

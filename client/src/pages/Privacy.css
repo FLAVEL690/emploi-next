@@ -1,0 +1,120 @@
+.privacy-page {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.privacy-hero {
+  padding: 72px 20px 64px;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--gray-900), var(--primary-dark) 58%, var(--primary));
+}
+
+.privacy-hero h1 {
+  max-width: 760px;
+  margin: 8px 0 14px;
+  font-size: 42px;
+  line-height: 1.15;
+  font-weight: 900;
+}
+
+.privacy-hero p:not(.privacy-eyebrow) {
+  max-width: 680px;
+  margin-bottom: 18px;
+  font-size: 17px;
+  line-height: 1.7;
+  opacity: 0.88;
+}
+
+.privacy-hero span {
+  color: var(--gray-300);
+  font-size: 13px;
+}
+
+.privacy-eyebrow {
+  color: var(--accent-light);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.privacy-content {
+  padding-top: 56px;
+  padding-bottom: 80px;
+}
+
+.privacy-document {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 40px clamp(24px, 5vw, 64px);
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+}
+
+.privacy-document h2 {
+  margin: 34px 0 10px;
+  color: var(--gray-900);
+  font-size: 20px;
+  line-height: 1.35;
+}
+
+.privacy-document h2:first-of-type {
+  margin-top: 28px;
+}
+
+.privacy-document p,
+.privacy-document li {
+  color: var(--gray-600);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.privacy-document ul {
+  margin: 12px 0 0 20px;
+}
+
+.privacy-document li {
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+.privacy-document a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.privacy-notice {
+  padding: 18px 20px;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-50);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.privacy-notice strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--gray-900);
+  font-size: 15px;
+}
+
+@media (max-width: 600px) {
+  .privacy-hero {
+    padding: 52px 20px 46px;
+  }
+
+  .privacy-hero h1 {
+    font-size: 32px;
+  }
+
+  .privacy-content {
+    padding-top: 28px;
+    padding-bottom: 48px;
+  }
+
+  .privacy-document {
+    padding: 28px 20px;
+  }
+}

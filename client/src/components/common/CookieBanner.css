@@ -1,0 +1,110 @@
+.cookie-banner {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2000;
+  display: grid;
+  grid-template-columns: auto minmax(260px, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  width: min(760px, calc(100vw - 48px));
+  padding: 20px 24px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  animation: cookieSlideIn 0.35s ease-out;
+}
+
+.cookie-banner-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  color: var(--primary);
+  background: var(--primary-50);
+  border-radius: 50%;
+  font-size: 21px;
+}
+
+.cookie-banner-content h2 {
+  margin-bottom: 4px;
+  color: var(--gray-900);
+  font-size: 15px;
+}
+
+.cookie-banner-content p {
+  color: var(--gray-600);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.cookie-banner-link {
+  display: inline-block;
+  margin-top: 5px;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.cookie-banner-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 150px;
+}
+
+.cookie-banner-actions .btn {
+  width: 100%;
+}
+
+.cookie-banner-close {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  display: flex;
+  padding: 5px;
+  color: var(--gray-500);
+  background: transparent;
+  border-radius: 50%;
+}
+
+.cookie-banner-close:hover {
+  color: var(--gray-900);
+  background: var(--gray-100);
+}
+
+@keyframes cookieSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 650px) {
+  .cookie-banner {
+    right: 12px;
+    bottom: 12px;
+    grid-template-columns: auto 1fr;
+    width: calc(100vw - 24px);
+    padding: 18px;
+  }
+
+  .cookie-banner-actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+  }
+
+  .cookie-banner-close {
+    top: 6px;
+    right: 6px;
+  }
+}
