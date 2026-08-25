@@ -29,7 +29,7 @@
 .share-menu {
   position: absolute;
   right: 0;
-  bottom: calc(100% + 8px);
+  top: calc(100% + 8px);
   min-width: 170px;
   padding: 6px;
   background: var(--white);
