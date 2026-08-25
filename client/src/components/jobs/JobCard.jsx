@@ -35,7 +35,7 @@ export default function JobCard({ job }) {
         </div>
       </div>
 
-      <ShareButton job={job} className="job-card-share" />
+      {/* <ShareButton job={job} className="job-card-share" /> */}
 
       <div className="job-card-tags">
         <span className="badge badge-primary">
