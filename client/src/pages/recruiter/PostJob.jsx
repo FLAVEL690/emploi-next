@@ -67,6 +67,7 @@ export default function PostJob() {
   };
 
   const isRecruiterProfileComplete = () => {
+    if (user?.role === 'admin') return true;
     return user?.company && user?.company_description && user?.company_email && user?.company_phone;
   };
 
