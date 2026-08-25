@@ -4,6 +4,7 @@ import { FiMapPin, FiBriefcase, FiMonitor, FiCalendar, FiEye, FiHeart, FiArrowLe
 import { getJobById, applyToJob, toggleSaveJob, checkJobSaved, getMyApplications, getOrCreateConversation } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/common/SEO';
+import ShareButton from '../components/common/ShareButton';
 import './JobDetail.css';
 
 export default function JobDetail() {
@@ -136,10 +137,11 @@ export default function JobDetail() {
                   job.company?.[0] || 'E'
                 )}
               </div>
-              <div>
+              <div className="job-detail-title">
                 <h1>{job.title}</h1>
                 <p className="job-detail-company">{job.company}</p>
               </div>
+              <ShareButton job={job} />
             </div>
 
             <div className="job-detail-badges">

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FiMapPin, FiClock, FiBriefcase, FiMonitor } from 'react-icons/fi';
+import ShareButton from '../common/ShareButton';
 import './JobCard.css';
 
 export default function JobCard({ job }) {
@@ -32,6 +33,8 @@ export default function JobCard({ job }) {
           <p className="job-card-company">{job.company}</p>
         </div>
       </div>
+
+      <ShareButton job={job} className="job-card-share" />
 
       <div className="job-card-tags">
         <span className="badge badge-primary">

@@ -4,6 +4,13 @@
   transition: var(--transition);
   position: relative;
   border: 1px solid var(--gray-100);
+  overflow: visible;
+}
+
+.job-card-share {
+  position: absolute;
+  top: 18px;
+  right: 18px;
 }
 
 .job-card::before {

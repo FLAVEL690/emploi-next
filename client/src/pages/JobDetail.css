@@ -43,6 +43,11 @@
   margin-bottom: 22px;
 }
 
+.job-detail-title {
+  flex: 1;
+  min-width: 0;
+}
+
 .job-detail-logo {
   width: 60px;
   height: 60px;
@@ -392,6 +397,19 @@
 }
 
 @media (max-width: 768px) {
+  .job-detail-header {
+    align-items: flex-start;
+  }
+
+  .job-detail-header .share-button {
+    width: 40px;
+    padding: 8px;
+  }
+
+  .job-detail-header .share-button span {
+    display: none;
+  }
+
   .job-detail-layout {
     grid-template-columns: 1fr;
   }

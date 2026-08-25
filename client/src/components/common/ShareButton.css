@@ -1,0 +1,87 @@
+.share-wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.share-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--gray-700);
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.share-button:hover,
+.share-button[aria-expanded='true'] {
+  border-color: var(--primary);
+  background: var(--primary-50);
+  color: var(--primary);
+}
+
+.share-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  min-width: 170px;
+  padding: 6px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.share-menu a,
+.share-menu button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  background: none;
+  color: var(--gray-700);
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.share-menu a:hover,
+.share-menu button:hover {
+  background: var(--gray-100);
+  color: var(--primary);
+}
+
+.share-menu svg {
+  flex-shrink: 0;
+  color: var(--primary);
+}
+
+.share-network-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .share-button span {
+    display: none;
+  }
+
+  .share-button {
+    width: 40px;
+    padding: 8px;
+  }
+}
