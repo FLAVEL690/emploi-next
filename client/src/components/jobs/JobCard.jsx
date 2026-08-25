@@ -6,6 +6,7 @@ import './JobCard.css';
 export default function JobCard({ job }) {
   const modeLabels = { 'on-site': 'Présentiel', 'remote': 'En ligne', 'hybrid': 'Hybride' };
   const typeLabels = { 'full-time': 'Temps plein', 'part-time': 'Temps partiel', 'cdd': 'CDD', 'cdi': 'CDI', 'contract': 'Contrat', 'internship': 'Stage', 'freelance': 'Freelance' };
+  const isAdminPublisher = job.profiles?.role === 'admin';
 
   const timeAgo = (date) => {
     const now = new Date();
@@ -23,14 +24,14 @@ export default function JobCard({ job }) {
       <div className="job-card-header">
         <div className="job-company-logo">
           {job.profiles?.avatar ? (
-            <img src={job.profiles.avatar} alt={job.company} className="company-logo-img" />
+            <img src={job.profiles.avatar} alt="Logo de l'offre" className="company-logo-img" />
           ) : (
             job.company?.[0] || 'E'
           )}
         </div>
         <div className="job-card-meta">
           <h3 className="job-card-title">{job.title}</h3>
-          <p className="job-card-company">{job.company}</p>
+          {!isAdminPublisher && <p className="job-card-company">{job.company}</p>}
         </div>
       </div>
 

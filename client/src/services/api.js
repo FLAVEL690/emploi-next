@@ -83,7 +83,7 @@ export async function changePassword(newPassword) {
 export async function getJobs({ category, city, country, district, mode, type, search, page = 1, limit = 12 } = {}) {
   let query = supabase
     .from('jobs')
-    .select('*, profiles!jobs_recruiter_id_fkey(first_name, last_name, avatar)', { count: 'exact' })
+    .select('*, profiles!jobs_recruiter_id_fkey(first_name, last_name, avatar, role)', { count: 'exact' })
     .eq('is_active', true)
     .gt('expires_at', new Date().toISOString())
     .order('created_at', { ascending: false });
@@ -107,7 +107,7 @@ export async function getJobs({ category, city, country, district, mode, type, s
 export async function getJobById(id) {
   const { data, error } = await supabase
     .from('jobs')
-    .select('*, profiles!jobs_recruiter_id_fkey(first_name, last_name, company, avatar, company_description, website, linkedin, facebook, twitter)')
+    .select('*, profiles!jobs_recruiter_id_fkey(first_name, last_name, company, avatar, role, company_description, website, linkedin, facebook, twitter)')
     .eq('id', id)
     .single();
   if (error) throw error;

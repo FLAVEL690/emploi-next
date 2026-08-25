@@ -95,6 +95,8 @@ export default function JobDetail() {
   const levelLabels = { 'junior': 'Junior', 'mid': 'Intermédiaire', 'senior': 'Senior', 'any': 'Tous niveaux' };
 
   const recruiter = job.profiles;
+  const isAdminPublisher = recruiter?.role === 'admin';
+  const publicCompany = isAdminPublisher ? 'NexJob' : (job.company || 'Entreprise');
 
   const jobJsonLd = {
     "@context": "https://schema.org",
@@ -109,7 +111,7 @@ export default function JobDetail() {
     },
     "hiringOrganization": {
       "@type": "Organization",
-      "name": job.company || 'Entreprise',
+      "name": publicCompany,
       "sameAs": "https://nexjob.nexadigic.cm/"
     }
   };
@@ -117,9 +119,12 @@ export default function JobDetail() {
   return (
     <div className="job-detail-page">
       <SEO
-        title={`${job.title} - ${job.company || 'Emploi'}`}
-        description={`Offre d'emploi: ${job.title} chez ${job.company || 'une entreprise'} à ${job.location || 'Cameroun'}. Postulez maintenant sur NexJob !`}
+        title={isAdminPublisher ? job.title : `${job.title} - ${job.company || 'Emploi'}`}
+        description={isAdminPublisher
+          ? `Offre d'emploi: ${job.title} à ${job.location || 'Cameroun'}. Postulez maintenant sur NexJob !`
+          : `Offre d'emploi: ${job.title} chez ${job.company || 'une entreprise'} à ${job.location || 'Cameroun'}. Postulez maintenant sur NexJob !`}
         path={`/jobs/${id}`}
+        image={isAdminPublisher ? recruiter?.avatar : undefined}
         jsonLd={jobJsonLd}
       />
       <div className="container">
@@ -132,14 +137,14 @@ export default function JobDetail() {
             <div className="job-detail-header">
               <div className="job-detail-logo">
                 {recruiter?.avatar ? (
-                  <img src={recruiter.avatar} alt={job.company} className="company-logo-img" />
+                  <img src={recruiter.avatar} alt="Logo de l'offre" className="company-logo-img" />
                 ) : (
                   job.company?.[0] || 'E'
                 )}
               </div>
               <div className="job-detail-title">
                 <h1>{job.title}</h1>
-                <p className="job-detail-company">{job.company}</p>
+                {!isAdminPublisher && <p className="job-detail-company">{job.company}</p>}
               </div>
               <ShareButton job={job} />
             </div>
@@ -223,7 +228,7 @@ export default function JobDetail() {
                 </div>
               )}
 
-              <div className="sidebar-info about-company">
+              {!isAdminPublisher && <div className="sidebar-info about-company">
                 <h3>A propos de l'entreprise</h3>
                 <div className="company-header">
                   <div className="company-avatar">
@@ -263,7 +268,7 @@ export default function JobDetail() {
                     )}
                   </div>
                 )}
-              </div>
+              </div>}
             </div>
           </div>
         </div>

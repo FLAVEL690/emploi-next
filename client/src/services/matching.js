@@ -69,7 +69,7 @@ export async function getMatchingJobsForCandidate(candidateId) {
   const now = new Date().toISOString();
   const { data: jobs } = await supabase
     .from('jobs')
-    .select('*, profiles!jobs_recruiter_id_fkey(first_name, last_name, avatar)')
+    .select('*, profiles!jobs_recruiter_id_fkey(first_name, last_name, avatar, role)')
     .eq('is_active', true)
     .gt('expires_at', now)
     .order('created_at', { ascending: false })

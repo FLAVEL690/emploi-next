@@ -6,7 +6,7 @@ export default function ShareButton({ job, className = '' }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const url = `${window.location.origin}/jobs/${job.id}`;
-  const text = `${job.title} chez ${job.company || 'NexJob'}`;
+  const text = job.title;
   const encodedUrl = encodeURIComponent(url);
   const encodedText = encodeURIComponent(text);
 
