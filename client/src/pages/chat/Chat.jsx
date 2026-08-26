@@ -42,7 +42,8 @@ export default function Chat() {
   const messagesEndRef = useRef(null);
 
   const role = user?.role;
-  const chatBase = role === 'recruiter' ? '/recruiter/chat' : '/candidate/chat';
+  const isCandidateView = role === 'candidate';
+  const chatBase = isCandidateView ? '/candidate/chat' : '/recruiter/chat';
 
   const refreshConversations = useCallback(async () => {
     if (!authUser) return;
@@ -158,7 +159,6 @@ export default function Chat() {
     return <div className="loading-spinner"><div className="spinner"></div></div>;
   }
 
-  const isCandidateView = role !== 'recruiter';
   const otherName = (conv) => isCandidateView
     ? (conv.recruiter?.company || `${conv.recruiter?.first_name || ''} ${conv.recruiter?.last_name || ''}`.trim() || 'Entreprise')
     : `${conv.candidate?.first_name || ''} ${conv.candidate?.last_name || ''}`.trim() || 'Candidat';

@@ -114,7 +114,7 @@ export default function Navbar() {
                   <Link to={getDashboardLink()} onClick={() => setDropdownOpen(false)}>
                     <FiGrid /> Dashboard
                   </Link>
-                  <Link to={user.role === 'recruiter' ? '/recruiter/chat' : '/candidate/chat'} onClick={() => setDropdownOpen(false)}>
+                  <Link to={user.role === 'candidate' ? '/candidate/chat' : '/recruiter/chat'} onClick={() => setDropdownOpen(false)}>
                     <FiMessageCircle /> Messagerie
                   </Link>
                   <Link to="/profile" onClick={() => setDropdownOpen(false)}>
