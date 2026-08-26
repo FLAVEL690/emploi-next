@@ -136,6 +136,24 @@
   white-space: pre-wrap;
 }
 
+.job-skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.job-skills-list li {
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  background: var(--primary-50);
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .sidebar-card {
   background: var(--white);
   border-radius: var(--radius-xl);

@@ -167,6 +167,17 @@ export default function JobDetail() {
               <div className="job-description">{job.description}</div>
             </div>
 
+            {job.skills?.filter(Boolean).length > 0 && (
+              <div className="job-detail-section">
+                <h2>Compétences requises</h2>
+                <ul className="job-skills-list">
+                  {job.skills.filter(Boolean).map((skill, index) => (
+                    <li key={`${skill}-${index}`}>{skill}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {job.requirements && (
               <div className="job-detail-section">
                 <h2>Exigences</h2>
