@@ -1,12 +1,12 @@
 import { Helmet } from 'react-helmet-async';
 
-const SITE_URL = 'https://nexjob.nexadigic.cm';
+const SITE_URL = 'https://nexjoob.nexadigic.cm';
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 export default function SEO({ title, description, path = '', image, type = 'website', jsonLd }) {
-  const fullTitle = title ? `${title} | NexJob` : 'NexJob - Trouvez le job idéal au Cameroun';
+  const fullTitle = title ? `${title} | nexjoob` : 'nexjoob - Trouvez le job idéal au Cameroun';
   const fullUrl = `${SITE_URL}${path}`;
-  const metaDescription = description || 'NexJob est la plateforme de recrutement #1 au Cameroun. Trouvez des milliers d\'offres d\'emploi et postulez en un clic.';
+  const metaDescription = description || 'nexjoob est la plateforme de recrutement #1 au Cameroun. Trouvez des milliers d\'offres d\'emploi et postulez en un clic.';
   const metaImage = image || DEFAULT_IMAGE;
 
   return (

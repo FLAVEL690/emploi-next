@@ -9,7 +9,7 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const text = `*Nouveau message depuis NexJob*%0A%0A*Nom:* ${form.name}%0A*Email:* ${form.email}%0A*Sujet:* ${form.subject}%0A%0A*Message:*%0A${form.message}`;
+    const text = `*Nouveau message depuis nexjoob*%0A%0A*Nom:* ${form.name}%0A*Email:* ${form.email}%0A*Sujet:* ${form.subject}%0A%0A*Message:*%0A${form.message}`;
     window.open(`https://wa.me/237672342582?text=${text}`, '_blank');
     setSent(true);
     setTimeout(() => setSent(false), 4000);
@@ -19,7 +19,7 @@ export default function Contact() {
     <div className="contact-page">
       <SEO
         title="Contactez-nous"
-        description="Besoin d'aide ou d'informations ? Contactez l'équipe NexJob. Nous sommes disponibles pour répondre à toutes vos questions sur le recrutement au Cameroun."
+        description="Besoin d'aide ou d'informations ? Contactez l'équipe nexjoob. Nous sommes disponibles pour répondre à toutes vos questions sur le recrutement au Cameroun."
         path="/contact"
       />
       <section className="contact-hero">

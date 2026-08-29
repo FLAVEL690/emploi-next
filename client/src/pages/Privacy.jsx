@@ -6,14 +6,14 @@ export default function Privacy() {
     <main className="privacy-page">
       <SEO
         title="Politique de confidentialite"
-        description="Politique de confidentialite et protection des donnees personnelles de NexJob."
+        description="Politique de confidentialite et protection des donnees personnelles de nexjoob."
         path="/privacy"
       />
       <section className="privacy-hero">
         <div className="container">
           <p className="privacy-eyebrow">Protection des donnees</p>
           <h1>Politique de confidentialite</h1>
-          <p>Cette politique explique comment NexJob collecte, utilise et protege vos donnees personnelles.</p>
+          <p>Cette politique explique comment nexjoob collecte, utilise et protege vos donnees personnelles.</p>
           <span>Derniere mise a jour : 25 aout 2026</span>
         </div>
       </section>
@@ -26,7 +26,7 @@ export default function Privacy() {
           </div>
 
           <h2>1. Responsable du traitement</h2>
-          <p>Le responsable du traitement est NexaDigic, editeur de NexJob, situe a Yaounde, Cameroun. Pour toute question relative a vos donnees, contactez-nous a <a href="mailto:contact@nexadigic.cm">contact@nexadigic.cm</a>.</p>
+          <p>Le responsable du traitement est NexaDigic, editeur de nexjoob, situe a Yaounde, Cameroun. Pour toute question relative a vos donnees, contactez-nous a <a href="mailto:contact@nexadigic.cm">contact@nexadigic.cm</a>.</p>
 
           <h2>2. Donnees collectees</h2>
           <ul>
@@ -40,7 +40,7 @@ export default function Privacy() {
           <p>Vos donnees sont utilisees pour creer et gerer votre compte, afficher les offres, transmettre et suivre les candidatures, permettre les echanges entre candidats et recruteurs, securiser le service et repondre a vos demandes. Ces traitements reposent selon le cas sur l'execution du service demande, votre consentement, notre interet legitime de securite et nos obligations legales.</p>
 
           <h2>4. Notifications et stockage local</h2>
-          <p>Les notifications push sont activees uniquement apres votre action explicite et peuvent etre desactivees dans votre navigateur ou depuis votre profil. Le stockage local et la session du navigateur servent aux fonctions essentielles : authentification, brouillons et limitation du comptage d'une meme consultation d'offre. Aucun cookie publicitaire n'est utilise par NexJob.</p>
+          <p>Les notifications push sont activees uniquement apres votre action explicite et peuvent etre desactivees dans votre navigateur ou depuis votre profil. Le stockage local et la session du navigateur servent aux fonctions essentielles : authentification, brouillons et limitation du comptage d'une meme consultation d'offre. Aucun cookie publicitaire n'est utilise par nexjoob.</p>
 
           <h2>5. Destinataires et sous-traitants</h2>
           <p>Les donnees sont accessibles aux personnes autorisees de NexaDigic et, lorsque necessaire, aux utilisateurs concernes par le recrutement (par exemple un recruteur recevant une candidature). Nous utilisons des prestataires techniques, notamment Supabase pour l'authentification et l'hebergement des donnees. Ils n'utilisent les donnees que pour fournir leurs services et selon nos instructions.</p>
@@ -52,7 +52,7 @@ export default function Privacy() {
           <p>Dans les conditions prevues par la reglementation applicable, vous pouvez demander l'acces, la rectification, l'effacement, la limitation ou la portabilite de vos donnees, vous opposer a certains traitements et retirer votre consentement. Envoyez votre demande a <a href="mailto:contact@nexadigic.cm">contact@nexadigic.cm</a> en precisant l'adresse associee a votre compte. Une verification d'identite peut etre demandee.</p>
 
           <h2>8. Securite et transferts</h2>
-          <p>NexJob met en place des mesures techniques et organisationnelles destinees a proteger les donnees contre l'acces, la modification ou la divulgation non autorisee. Lorsque nos prestataires traitent des donnees hors de votre pays, nous veillons a appliquer les garanties requises par la reglementation applicable.</p>
+          <p>nexjoob met en place des mesures techniques et organisationnelles destinees a proteger les donnees contre l'acces, la modification ou la divulgation non autorisee. Lorsque nos prestataires traitent des donnees hors de votre pays, nous veillons a appliquer les garanties requises par la reglementation applicable.</p>
 
           <h2>9. Reclamation</h2>
           <p>Nous vous invitons a nous contacter d'abord afin de resoudre toute difficulte. Vous pouvez egalement saisir l'autorite de protection des donnees competente dans votre pays de residence ou de travail, notamment lorsque le RGPD vous est applicable.</p>

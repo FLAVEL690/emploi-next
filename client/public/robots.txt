@@ -6,4 +6,4 @@ Disallow: /candidate
 Disallow: /profile
 Disallow: /notifications
 
-Sitemap: https://nexjob.nexadigic.cm/sitemap.xml
+Sitemap: https://nexjoob.nexadigic.cm/sitemap.xml

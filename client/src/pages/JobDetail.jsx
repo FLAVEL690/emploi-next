@@ -96,7 +96,7 @@ export default function JobDetail() {
 
   const recruiter = job.profiles;
   const isAdminPublisher = recruiter?.role === 'admin';
-  const publicCompany = isAdminPublisher ? 'NexJob' : (job.company || 'Entreprise');
+  const publicCompany = isAdminPublisher ? 'nexjoob' : (job.company || 'Entreprise');
 
   const jobJsonLd = {
     "@context": "https://schema.org",
@@ -112,7 +112,7 @@ export default function JobDetail() {
     "hiringOrganization": {
       "@type": "Organization",
       "name": publicCompany,
-      "sameAs": "https://nexjob.nexadigic.cm/"
+      "sameAs": "https://nexjoob.nexadigic.cm/"
     }
   };
 
@@ -121,8 +121,8 @@ export default function JobDetail() {
       <SEO
         title={isAdminPublisher ? job.title : `${job.title} - ${job.company || 'Emploi'}`}
         description={isAdminPublisher
-          ? `Offre d'emploi: ${job.title} à ${job.location || 'Cameroun'}. Postulez maintenant sur NexJob !`
-          : `Offre d'emploi: ${job.title} chez ${job.company || 'une entreprise'} à ${job.location || 'Cameroun'}. Postulez maintenant sur NexJob !`}
+          ? `Offre d'emploi: ${job.title} à ${job.location || 'Cameroun'}. Postulez maintenant sur nexjoob !`
+          : `Offre d'emploi: ${job.title} chez ${job.company || 'une entreprise'} à ${job.location || 'Cameroun'}. Postulez maintenant sur nexjoob !`}
         path={`/jobs/${id}`}
         image={isAdminPublisher ? recruiter?.avatar : undefined}
         jsonLd={jobJsonLd}

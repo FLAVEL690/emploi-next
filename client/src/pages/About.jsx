@@ -6,13 +6,13 @@ export default function About() {
   return (
     <div className="about-page">
       <SEO
-        title="A propos de NexJob"
-        description="Découvrez NexJob, la plateforme de recrutement qui connecte les meilleurs talents aux entreprises au Cameroun. Notre mission, notre équipe et nos valeurs."
+        title="A propos de nexjoob"
+        description="Découvrez nexjoob, la plateforme de recrutement qui connecte les meilleurs talents aux entreprises au Cameroun. Notre mission, notre équipe et nos valeurs."
         path="/about"
       />
       <section className="about-hero">
         <div className="container">
-          <h1>A propos de <span className="highlight">NexJob</span></h1>
+          <h1>A propos de <span className="highlight">nexjoob</span></h1>
           <p>Nous connectons les talents aux opportunites qui transforment des vies. Notre mission est de rendre le recrutement simple, rapide et accessible a tous.</p>
         </div>
       </section>
@@ -47,7 +47,7 @@ export default function About() {
 
       <section className="about-stats">
         <div className="container">
-          <h2 className="section-title">NexJob en chiffres</h2>
+          <h2 className="section-title">nexjoob en chiffres</h2>
           <p className="section-subtitle">Des resultats concrets qui parlent d'eux-memes</p>
           <div className="about-stats-grid">
             <div className="about-stat-card">

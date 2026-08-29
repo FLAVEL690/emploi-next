@@ -141,7 +141,7 @@ export async function createJob(jobData, userId, company) {
       recruiter_id: userId,
       title: jobData.title,
       description: jobData.description,
-      company: company || jobData.company || 'NexJob',
+      company: company || jobData.company || 'nexjoob',
       category: jobData.category,
       type: jobData.type,
       mode: jobData.mode,

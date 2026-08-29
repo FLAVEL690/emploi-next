@@ -37,7 +37,7 @@ export default function Home() {
     <div className="home">
       <SEO
         title="Accueil - Trouvez le job idéal au Cameroun"
-        description="NexJob est la plateforme de recrutement #1 au Cameroun. Découvrez des milliers d'offres d'emploi à Douala, Yaoundé et partout au Cameroun. Postulez en un clic !"
+        description="nexjoob est la plateforme de recrutement #1 au Cameroun. Découvrez des milliers d'offres d'emploi à Douala, Yaoundé et partout au Cameroun. Postulez en un clic !"
         path="/"
       />
       <section className="hero">

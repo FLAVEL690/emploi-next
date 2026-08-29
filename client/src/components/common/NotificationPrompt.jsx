@@ -98,9 +98,9 @@ export default function NotificationPrompt() {
         </strong>
         <p>
           {denied
-            ? 'Votre navigateur bloque les notifications NexJob. Cliquez sur « Réessayer » après les avoir réactivées dans les paramètres du navigateur.'
+            ? 'Votre navigateur bloque les notifications nexjoob. Cliquez sur « Réessayer » après les avoir réactivées dans les paramètres du navigateur.'
             : iosNotStandalone
-              ? 'Ajoutez NexJob à l\'écran d\'accueil (menu Partager) puis relancez-le depuis l\'icône pour activer les notifications.'
+              ? 'Ajoutez nexjoob à l\'écran d\'accueil (menu Partager) puis relancez-le depuis l\'icône pour activer les notifications.'
               : 'Recevez en temps réel vos messages, nouvelles offres et candidatures, même hors de l\'application.'}
         </p>
       </div>

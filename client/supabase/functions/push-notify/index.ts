@@ -36,7 +36,7 @@ const NOTIFY_SECRET = Deno.env.get('NOTIFY_SECRET') || '';
 const VAPID_PUBLIC_KEY = Deno.env.get('VAPID_PUBLIC_KEY') || '';
 const VAPID_PRIVATE_KEY = Deno.env.get('VAPID_PRIVATE_KEY') || '';
 const VAPID_SUBJECT = Deno.env.get('VAPID_SUBJECT') || 'mailto:noreply@nexadigic.cm';
-const SITE_URL = Deno.env.get('SITE_URL') || 'https://nexjob.nexadigic.cm';
+const SITE_URL = Deno.env.get('SITE_URL') || 'https://nexjoob.nexadigic.cm';
 
 webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
@@ -71,7 +71,7 @@ function notificationTitle(type) {
     case 'candidates_match': return 'Candidats potentiels';
     case 'new_application': return 'Nouvelle candidature';
     case 'application_update': return 'Mise à jour de candidature';
-    default: return 'NexJob';
+    default: return 'nexjoob';
   }
 }
 
@@ -126,7 +126,7 @@ Deno.serve(async (req) => {
 
   const pushPayload = JSON.stringify({
     title: notificationTitle(notif.type),
-    body: notif.message || 'Une nouvelle notification vous attend sur NexJob.',
+    body: notif.message || 'Une nouvelle notification vous attend sur nexjoob.',
     url: notificationUrl(notif, role),
   });
 

@@ -1,8 +1,8 @@
-// Service worker NexJob : réception des notifications push
+// Service worker nexjoob : réception des notifications push
 // et ouverture de la page concernée au clic.
 
 self.addEventListener('push', (event) => {
-  let payload = { title: 'NexJob', body: '', url: '/' };
+  let payload = { title: 'nexjoob', body: '', url: '/' };
   if (event.data) {
     try {
       payload = { ...payload, ...event.data.json() };
@@ -12,14 +12,14 @@ self.addEventListener('push', (event) => {
   }
 
   const options = {
-    body: payload.body || 'Une nouvelle notification vous attend sur NexJob.',
-    icon: '/logo_nexjob.png',
+    body: payload.body || 'Une nouvelle notification vous attend sur nexjoob.',
+    icon: '/logo_nexjoob.png',
     badge: '/favicon.svg',
     vibrate: [100, 50, 100],
     data: { url: payload.url || '/' },
   };
 
-  event.waitUntil(self.registration.showNotification(payload.title || 'NexJob', options));
+  event.waitUntil(self.registration.showNotification(payload.title || 'nexjoob', options));
 });
 
 self.addEventListener('notificationclick', (event) => {

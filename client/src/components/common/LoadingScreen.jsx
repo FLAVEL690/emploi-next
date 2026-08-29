@@ -32,7 +32,7 @@ export default function LoadingScreen({ onFinish }) {
             <div className="ring-segment"></div>
           </div>
           <div className="loading-logo-glow"></div>
-          <img src="/logo_loading.jpeg" alt="NexJob" className="loading-logo" />
+          <img src="/logo_loading.jpeg" alt="nexjoob" className="loading-logo" />
         </div>
 
         <div className="loading-text">

@@ -60,7 +60,7 @@ export default function Jobs() {
     <div className="jobs-page">
       <SEO
         title="Offres d'emploi au Cameroun"
-        description="Parcourez des centaines d'offres d'emploi au Cameroun. CDI, CDD, stages et freelance à Douala, Yaoundé et dans toutes les villes. Postulez gratuitement sur NexJob."
+        description="Parcourez des centaines d'offres d'emploi au Cameroun. CDI, CDD, stages et freelance à Douala, Yaoundé et dans toutes les villes. Postulez gratuitement sur nexjoob."
         path="/jobs"
       />
       <div className="container">

@@ -77,7 +77,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          <img src="/logo_nexjob.png" alt="NexJob" className="navbar-logo-img" />
+          <img src="/logo_nexjoob.png" alt="nexjoob" className="navbar-logo-img" />
         </Link>
 
         <div className={`navbar-links ${menuOpen ? 'active' : ''}`}>

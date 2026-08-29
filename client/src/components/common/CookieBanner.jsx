@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiShield, FiX } from 'react-icons/fi';
 import './CookieBanner.css';
 
-const CONSENT_KEY = 'nexjob_cookie_consent';
+const CONSENT_KEY = 'nexjoob_cookie_consent';
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -27,7 +27,7 @@ export default function CookieBanner() {
       <div className="cookie-banner-content">
         <h2>Votre vie privee compte</h2>
         <p>
-          NexJob utilise uniquement les stockages necessaires au fonctionnement du compte et de vos preferences. Aucun cookie publicitaire n'est utilise. Vous pouvez accepter ou refuser les cookies optionnels.
+          nexjoob utilise uniquement les stockages necessaires au fonctionnement du compte et de vos preferences. Aucun cookie publicitaire n'est utilise. Vous pouvez accepter ou refuser les cookies optionnels.
         </p>
         <Link to="/privacy" className="cookie-banner-link">Lire la politique de confidentialite</Link>
       </div>
